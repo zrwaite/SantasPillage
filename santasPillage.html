@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Platformer Game</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" type="text/css" href="src/styles.css" />
+  </head>
+
+  <body>
+    <img id="img-zacSR" src="images/ZacSR.png" />
+    <img id="img-mattSR" src="images/MattSR.png" />
+    <img id="img-ghostL" src="images/GhostL.png" />
+    <img id="img-ghostR" src="images/GhostR.png" />
+    <img id="img-background" src="images/Background.png" />
+    <img id="img-wideBackground" src="images/WideBackground.png" />
+    <img id="img-block" src="images/block.png" />
+    <img id="img-door" src="images/Door.png" />
+    <img id="img-elfSR" src="images/ElfSR.png" />
+    <canvas id="gameScreen" width="800" height="600"></canvas>
+    <audio autoplay loop id="Song">
+      <source src="music/songLoop.mp3" type="audio/mpeg">
+    </audio>
+    <script>
+      var song = document.getElementById("Song");
+      song.volume = 0.0;
+    </script>
+    <script type="module" src="src/index.js"></script>
+    <noscript>Sorry, your browser does not support JavaScript!</noscript>
+  </body>
+</html>
