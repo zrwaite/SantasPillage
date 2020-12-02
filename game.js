@@ -7,7 +7,7 @@ import Door from "./door.js"
 import Display from "./display.js"
 import Bg from "./bg.js"
 import { onePBuild, onePLevels} from "./1PLevels.js"
-import { twoPBuild, twoPLevel0, twoPLevel1, twoPLevel2, twoPLevel3, twoPLevel4, twoPLevel5, twoPLevel6} from "./2PLevels.js"
+import { twoPBuild, twoPLevels} from "./2PLevels.js"
 
 export default class Game {
   constructor(gameWidth, gameHeight) {
@@ -16,7 +16,7 @@ export default class Game {
     this.gravity = 1-(0.3)
     this.Fric = 1-(0.4) //Friction
     this.onePLevels = onePLevels
-    this.twoPLevels = [twoPLevel0, twoPLevel1, twoPLevel2, twoPLevel3, twoPLevel4, twoPLevel5, twoPLevel6]
+    this.twoPLevels = twoPLevels
     this.level = 0 //starting level is 0
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
@@ -44,7 +44,7 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
-    [...this.persons, ...this.blocks, ...this.doors].forEach((object) => object = null)
+    [...this.persons, ...this.blocks, ...this.doors, ...this.elves].forEach((object) => object = null)
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator
     if (this.numPlayers === 1){this.objects = onePBuild(this, this.onePLevels[this.level])}
@@ -56,9 +56,7 @@ export default class Game {
     this.levelLen = this.objects[4] - 800
     this.inputs = [new Controller(this, this.persons[0])]
     //Multiplayer:
-    if (this.numPlayers > 1){
-      this.inputs.push(new Controller(this, this.persons[1]))
-    }
+    if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
