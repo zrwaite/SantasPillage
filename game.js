@@ -27,6 +27,7 @@ export default class Game {
     this.blocks = []
     this.doors = []
     this.elves = []
+    this.gingers = []
     this.inputs = []
     this.states = {
       start: 0,
@@ -44,7 +45,7 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
-    [...this.persons, ...this.blocks, ...this.doors, ...this.elves].forEach((object) => object = null)
+    [...this.persons, ...this.blocks, ...this.doors, ...this.elves, ...this.gingers].forEach((object) => object = null)
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator
     if (this.numPlayers === 1){this.objects = onePBuild(this, this.onePLevels[this.level])}
@@ -53,7 +54,8 @@ export default class Game {
     this.blocks = this.objects[1]
     this.doors = this.objects[2]
     this.elves = this.objects[3]
-    this.levelLen = this.objects[4] - 800
+    this.gingers = this.objects[4]
+    this.levelLen = this.objects[5]-800
     this.inputs = [new Controller(this, this.persons[0])]
     //Multiplayer:
     if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}
@@ -61,13 +63,14 @@ export default class Game {
   }
   update(deltaTime) {
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
-    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, this.display].forEach((object) =>object.update(deltaTime))//Updates all objects
+    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, ...this.gingers, this.display].forEach((object) =>object.update(deltaTime))//Updates all objects
   }
   draw(ctx) {
-    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, this.display].forEach((object) => object.draw(ctx))//Draws all objects
+    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, ...this.gingers, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
   togglePause() {
     if (this.state === this.states.paused) {this.state = this.states.running}
     else {this.state = this.states.paused}
   }
 }
+
