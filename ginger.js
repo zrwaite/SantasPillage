@@ -44,14 +44,18 @@ export default class Ginger extends Sprite{
     if (this.dir === this.dirs.right){
       if (this.canJump){
         this.speed.x = this.speed.maxx
+        this.jump()
       } else {
         this.speed.x = 1
+        this.jump()
       }
     } else {
       if (this.canJump){
         this.speed.x = -this.speed.maxx
+        this.jump()
       } else {
         this.speed.x = -1
+        this.jump()
       }
     }
 
