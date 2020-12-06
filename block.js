@@ -16,6 +16,7 @@ export default class Block {
     this.pos.x = this.startPos - this.game.pos
     this.game.persons.forEach((object)=> this.personDetector(object))
     this.game.elves.forEach((object)=> this.elfDetector(object))
+    this.game.gingers.forEach((object)=> this.gingerDetector(object))
   }
   draw(ctx) {ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)}
   detector(sprite){
@@ -84,6 +85,30 @@ export default class Block {
       case "bottom":
         elf.pos.y = this.pos.y + this.height
         elf.speed.y = 0
+        break
+    }
+  }
+  gingerDetector(ginger){
+    let spot = this.detector(ginger)
+    switch (String(spot)) {
+      case "top":
+        ginger.canJump = true
+        ginger.pos.y = this.pos.y - ginger.height
+        ginger.speed.y = 0;
+        ginger.jump()
+        break
+      case "left":
+        ginger.realPos = this.startPos - ginger.width
+        ginger.speed.x = 0
+        break
+      case "right":
+        ginger.realPos = this.startPos + this.width
+        ginger.speed.x = 0
+        break
+      case "bottom":
+        ginger.pos.y = this.pos.y + this.height
+        ginger.speed.y = 0
+        ginger.jump()
         break
     }
   }
