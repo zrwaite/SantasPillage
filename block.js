@@ -9,7 +9,7 @@ export default class Block {
     this.width = this.gWidth/20
     this.height = this.gHeight/15
     this.hitbox = -2 //changes the non-visual size of the box - negative means more likely to be vertical
-    this.hvHandicap = -2 //gives an advantage to the vertical axis during object detection
+    this.hvHandicap = 0 //gives an advantage to the vertical axis during object detection
     if (this.pos !== null){this.startPos = Math.abs(this.pos.x)}
   }
   update() {
@@ -38,6 +38,8 @@ export default class Block {
     return false
   }
   personDetector(person){
+    this.hvHandicap = -2
+    this.hitbox = -2
     let spot = this.detector(person)
     switch (String(spot)) {
       case "top":
@@ -65,6 +67,8 @@ export default class Block {
     }
   }
   elfDetector(elf){
+    this.hvHandicap = -3
+    this.hitbox = -2
     let spot = this.detector(elf)
     switch (String(spot)) {
       case "top":
@@ -89,6 +93,8 @@ export default class Block {
     }
   }
   gingerDetector(ginger){
+    this.hvHandicap = 2
+    this.hitbox = 0
     let spot = this.detector(ginger)
     switch (String(spot)) {
       case "top":
