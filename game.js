@@ -21,7 +21,7 @@ export default class Game {
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
     this.inDaZone = false //true if the map is moving and a person is stationary on screen
-    this.numPlayers = 1
+    this.numPlayers = 2
     this.objects = [] //Used to store all game objects from level generator
     this.persons = []
     this.blocks = []
@@ -55,22 +55,23 @@ export default class Game {
     this.doors = this.objects[2]
     this.elves = this.objects[3]
     this.gingers = this.objects[4]
-    this.levelLen = this.objects[5]-800
+    this.levelLen = this.objects[5] - 800
     this.inputs = [new Controller(this, this.persons[0])]
     //Multiplayer:
     if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
+    if (this.state===this.states.start){this.display.update(deltaTime)}
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
-    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, ...this.gingers, this.display].forEach((object) =>object.update(deltaTime))//Updates all objects
+    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.doors, this.display].forEach((object) =>object.update(deltaTime))//Updates all objects
   }
   draw(ctx) {
-    [this.bg, ...this.persons, ...this.elves, ...this.blocks, ...this.doors, ...this.gingers, this.display].forEach((object) => object.draw(ctx))//Draws all objects
+    if (this.state===this.states.start){this.display.draw(ctx)}
+    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.doors, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
   togglePause() {
     if (this.state === this.states.paused) {this.state = this.states.running}
     else {this.state = this.states.paused}
   }
 }
-
