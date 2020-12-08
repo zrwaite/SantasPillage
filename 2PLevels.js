@@ -20,7 +20,7 @@ export function twoPBuild(game, level) {
           y: game.block.height * rowIndex
         }
         if (playeri < 3){
-          blocks[0].push(new Person(game, playeri, pos))
+          blocks[0].push(new Person(game.info, playeri, pos))
         }
         playeri++
       } else if (block === 2) {
@@ -28,28 +28,28 @@ export function twoPBuild(game, level) {
           x: game.block.width * blockIndex,
           y: game.block.height * rowIndex
         }
-        blocks[1].push(new Block(game, blocki, pos))
+        blocks[1].push(new Block(game.info, blocki, pos))
         blocki++
       } else if (block === 3) {
         let pos = {
           x: game.block.width * blockIndex,
           y: game.block.height * rowIndex
         }
-        blocks[2].push(new Door(game, doori, pos))
+        blocks[2].push(new Door(game.info, doori, pos))
         doori++
       } else if (block === 4) {
         let pos = {
           x: game.block.width * blockIndex,
           y: game.block.height * rowIndex
         }
-        blocks[3].push(new Elf(game, elfi, pos))
+        blocks[3].push(new Elf(game.info, elfi, pos))
         elfi++
       } else if (block === 5) {
         let pos = {
           x: game.block.width * blockIndex,
           y: game.block.height * rowIndex
         }
-        blocks[4].push(new Ginger(game, elfi, pos))
+        blocks[4].push(new Ginger(game.info, elfi, pos))
         gingeri++
       }
     })

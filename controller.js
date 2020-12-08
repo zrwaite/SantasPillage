@@ -8,8 +8,8 @@ export default class Controller {
     this.uPressed = false
     this.dir = "right"
     this.controls = {
-      1: [37, 38, 39],
-      2: [65, 87, 68]
+      1: [65, 87, 68],
+      2: [37, 38, 39]
     }
     document.addEventListener("keydown", (event) => {
       switch (event.keyCode) {

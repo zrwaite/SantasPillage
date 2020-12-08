@@ -35,8 +35,7 @@ export default class Elf extends Sprite{
     this.speed.x = 0
   }
   update(deltaTime) {
-    console.log(this.speed.y)
-    if (this.pos.y + this.height >= this.gHeight) {this.canJump = true}
+    if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     this.speedControl()
     this.xDetect()
     super.update()
@@ -58,9 +57,6 @@ export default class Elf extends Sprite{
 
   }
   xDetect(){
-    if (this.realPos + this.width >= this.game.levelLen+800){
-      this.dir = this.dirs.left
-    }
     if (this.realPos <=0){
       this.realPos = 0
       this.dir = this.dirs.right

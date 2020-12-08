@@ -1,3 +1,11 @@
+var xpos = 0
+var ypos = 0
+function findScreenCoords(mouseEvent){
+  if (mouseEvent){
+    xpos = mouseEvent.clientX-6
+    ypos = mouseEvent.clientY-6
+  }
+}
 export default class Display{
   constructor(game){
     this.game = game
@@ -5,6 +13,7 @@ export default class Display{
     this.height = game.height
   }
   update(deltaTime){
+    document.getElementById("gameScreen").onmousemove = findScreenCoords
   }
   draw(ctx){
     //Menu Screen
@@ -20,6 +29,7 @@ export default class Display{
       ctx.fillText("Use the W-A-D arrow keys to move", this.width / 2, (this.height / 2))
       ctx.fillText("Avoid enemies, make it to the door", this.width / 2, (this.height / 2)+50)
       ctx.fillText("Kill skeletons to stop their pumpkins", this.width / 2, (this.height / 2)+100)
+      ctx.fillText("PosX: " + xpos + " PosY: " + ypos, this.width/2, (this.height/2)+150)
     }
     //Paused Screen
     else if (this.game.state === this.game.states.paused) {

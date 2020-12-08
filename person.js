@@ -26,10 +26,13 @@ export default class Person extends Sprite{
     this.legSpeed = 12 //time between the walking animation frames
     this.lives = 3
     this.canJump = false //Is true when there is ground under you
-    this.levelWidth = 0
-    this.inDaZone = false //If you are stationary while the map moves
     this.moving = false //If you are moving left or right with the controls
-    this.reset()
+    this.speed = {
+      x:0,
+      y:0,
+      maxx:6,
+      maxy: 14
+    }
   }
   reset(){
     this.pos.x = this.startPos.x
@@ -38,12 +41,9 @@ export default class Person extends Sprite{
     this.speed.x = 0
   }
   update(deltaTime) {
-    if (this.pos.y + this.height >= this.gHeight) {this.canJump = true}
+    if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     this.speedControl()
     this.xDetect()
-    this.controls()
-    this.daZone()
-    if(!this.game.inputs[this.id-1].rPressed&&!this.game.inputs[this.id-1].lPressed){this.moving = false} //If left and right aren't pressed then they aren't moving
     super.update()
   }
   speedControl(){
@@ -51,70 +51,32 @@ export default class Person extends Sprite{
     else if (this.speed.x<-this.speed.maxx){this.speed.x = -this.speed.maxx}
     else if (Math.abs(this.speed.x)<0.2){this.speed.x = 0} //Saves computation
     else {
-      if (!this.moving){this.accel = this.Fric} //Friction
+      if (!this.moving){this.accel = this.fric} //Friction
       this.speed.x *= this.accel
     }
   }
   xDetect(){
     //Horizontal bounds detection
-    if (this.realPos + this.width >= this.gWidth+this.game.pos){
-      this.realPos = this.gWidth - this.width + this.game.pos
-    }
     if (this.realPos <=0){
       this.realPos = 0
     }
   }
-  controls(){
-    if(this.game.inputs[this.id-1].uPressed){this.jump()}
-    if(this.game.inputs[this.id-1].lPressed){this.left()}
-    if(this.game.inputs[this.id-1].rPressed){this.right()}
-  }
-  daZone(){
-    this.levelWidth = this.game.levelLen
-    let pPoss = []; //Array of player positions
-    if ((this.realPos >= 450 && this.realPos<=450+this.levelWidth)||(this.game.pos>0 && this.game.pos<this.levelWidth)){
-      //This player in da zone
-      this.game.inDaZone = true
-      this.inDaZone = true;
-      [...this.game.persons].forEach((object)=>pPoss.push(object.realPos))
-      if (Math.max(...pPoss) > this.levelWidth + 450){
-        this.game.pos = this.levelWidth
-      } else{
-        this.game.pos = Math.max(...pPoss) - 450
-      }
-    } else if (this.game.pos>0 && this.game.pos<this.levelWidth){
-      //Other player in da zone
-      this.game.inDaZone = true
-      this.inDaZone = false;
-      [...this.game.persons].forEach((object)=>pPoss.push(object.realPos))
-      if (Math.max(...pPoss) > this.levelWidth + 450){
-        this.game.pos = this.levelWidth
-      } else{
-        this.game.pos = Math.max(...pPoss) - 450
-      }
-    } else {
-      //Nobody in da zone
-      this.game.inDaZone = false
-      this.inDaZone = false
-      if (this.game.pos >= this.levelWidth){this.game.pos = this.levelWidth}
-      else if (this.game.pos <= 0){this.game.pos = 0}
-    }
-  }
   left() {
+    console.log('left')
     if (!this.moving){//Only sets speed to 1 at the beginning, then accelerates to max speed
       this.dir = this.dirs.left
       this.speed.x = -1
       this.accel = 1.1
       this.moving = true
     }
-    else if(this.game.inputs[this.id-1].dir === "left"){
-      this.dir = this.dirs.left
+    else if(this.dir === this.dirs.left){
       if (this.speed.x >=-1){this.speed.x = -1}
       this.accel = 1.1
       this.moving = true
     }
   }
   right() {
+    console.log('right')
     if (!this.moving){
       this.dir = this.dirs.right
       this.speed.x = 1
@@ -122,7 +84,7 @@ export default class Person extends Sprite{
       this.moving = true
     }
     else{
-      if(this.game.inputs[this.id-1].dir === "right"){
+      if(this.dir === this.dirs.right){
         this.dir = this.dirs.right
         if (this.speed.x <=1){this.speed.x = 1}
         this.accel = 1.1
@@ -136,5 +98,4 @@ export default class Person extends Sprite{
       this.canJump = false
     }
   }
-
 }

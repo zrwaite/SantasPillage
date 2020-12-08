@@ -16,11 +16,12 @@ export default class Ginger extends Sprite{
     if (num === 0){this.dir = this.dirs.right}
     else {this.dir = this.dirs.left}
     this.image = this.images[this.mstate][this.dir]
-    this.height = 60
-    this.width = 40
+    this.height = 100
+    this.width = 60
     this.legSpeed = 12
     this.canJump = false
     this.gravity = 1-(0.5)
+    this.jumpCount = 0
     this.speed = {
       x:0,
       y:0,
@@ -36,7 +37,7 @@ export default class Ginger extends Sprite{
     this.speed.x = 0
   }
   update(deltaTime) {
-    if (this.pos.y + this.height >= this.gHeight) {this.canJump = true}
+    if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     this.speedControl()
     this.xDetect()
     super.update()
@@ -59,12 +60,8 @@ export default class Ginger extends Sprite{
         this.jump()
       }
     }
-
   }
   xDetect(){
-    if (this.realPos + this.width >= this.game.levelLen+800){
-      this.dir = this.dirs.left
-    }
     if (this.realPos <=0){
       this.realPos = 0
       this.dir = this.dirs.right
@@ -74,24 +71,7 @@ export default class Ginger extends Sprite{
     if (this.canJump) {
       this.speed.y = -this.speed.maxy
       this.canJump = false
-      this.pDetect()
+      this.jumpCount=1
     }
   }
-  pDetect(){
-    this.levelWidth = this.game.levelLen
-    let pPoss = []; //Array of player positions
-    if (this.game.numPlayers === 1){
-      if(this.realPos < this.game.persons[0].realPos){this.dir = this.dirs.right}
-      else {this.dir = this.dirs.left}
-    } else if (this.game.numPlayers === 2){
-      [...this.game.persons].forEach((object)=>pPoss.push(object.realPos))
-      if (Math.abs(this.realPos-pPoss[0])>Math.abs(this.realPos-pPoss[1])){pPoss = pPoss[1]}
-      else{pPoss = pPoss[0]}
-      if(this.realPos < pPoss){this.dir = this.dirs.right}
-      else {this.dir = this.dirs.left}
-    }
-
-
-  }
-
 }
