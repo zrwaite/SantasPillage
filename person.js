@@ -2,15 +2,15 @@ import Sprite from "./sprite.js"
 export default class Person extends Sprite{
   constructor(...args){
     super(...args)
-    this.zac = {"s":[document.getElementById("img-zacSR"),document.getElementById("img-zacSR")],
-    "j":[document.getElementById("img-zacSR"),document.getElementById("img-zacSR")],
-    "wl":[document.getElementById("img-zacSR"),document.getElementById("img-zacSR")],
-    "wr":[document.getElementById("img-zacSR"),document.getElementById("img-zacSR")]
+    this.zac = {"s":[document.getElementById("img-zacSL"),document.getElementById("img-zacSR")],
+    "j":[document.getElementById("img-zacJL"),document.getElementById("img-zacJR")],
+    "w1":[document.getElementById("img-zacWL1"),document.getElementById("img-zacWR1")],
+    "w2":[document.getElementById("img-zacWL2"),document.getElementById("img-zacWR2")]
     }
-    this.matt = {"s":[document.getElementById("img-mattSR"),document.getElementById("img-mattSR")],
-    "j":[document.getElementById("img-mattSR"),document.getElementById("img-mattSR")],
-    "wl":[document.getElementById("img-mattSR"),document.getElementById("img-mattSR")],
-    "wr":[document.getElementById("img-mattSR"),document.getElementById("img-mattSR")]
+    this.matt = {"s":[document.getElementById("img-mattSL"),document.getElementById("img-mattSR")],
+    "j":[document.getElementById("img-mattJL"),document.getElementById("img-mattJR")],
+    "w1":[document.getElementById("img-mattWL1"),document.getElementById("img-mattWR1")],
+    "w2":[document.getElementById("img-mattWL2"),document.getElementById("img-mattWR2")]
     }
     this.dirs = {
       left: 0,
@@ -23,6 +23,7 @@ export default class Person extends Sprite{
     this.image = this.person[this.mstate][this.dir]
     this.height = 100
     this.width = 50
+    this.count = 0
     this.legSpeed = 12 //time between the walking animation frames
     this.lives = 3
     this.canJump = false //Is true when there is ground under you
@@ -42,6 +43,17 @@ export default class Person extends Sprite{
   }
   update(deltaTime) {
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
+    if (!this.canJump){this.mstate="j"}
+    else if (this.moving){
+      this.count++
+      if (this.count<this.legSpeed){this.mstate="w1"}
+      else if (this.count<2*this.legSpeed){this.mstate="w2"}
+      else {this.count=0}
+    } else{
+      this.count = 0
+      this.mstate="s"
+    }
+    this.image = this.person[this.mstate][this.dir]
     this.speedControl()
     this.xDetect()
     super.update()
@@ -62,7 +74,6 @@ export default class Person extends Sprite{
     }
   }
   left() {
-    console.log('left')
     if (!this.moving){//Only sets speed to 1 at the beginning, then accelerates to max speed
       this.dir = this.dirs.left
       this.speed.x = -1
@@ -76,7 +87,6 @@ export default class Person extends Sprite{
     }
   }
   right() {
-    console.log('right')
     if (!this.moving){
       this.dir = this.dirs.right
       this.speed.x = 1

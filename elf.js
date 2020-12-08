@@ -2,22 +2,22 @@ import Sprite from "./sprite.js"
 export default class Elf extends Sprite{
   constructor(...args){
     super(...args)
-    this.images = {"s":[document.getElementById("img-elfSR"),document.getElementById("img-elfSR")],
-    "j":[document.getElementById("img-elfSR"),document.getElementById("img-elfSR")],
-    "wl":[document.getElementById("img-elfSR"),document.getElementById("img-elfSR")],
-    "wr":[document.getElementById("img-elfSR"),document.getElementById("img-elfSR")]
+    this.images = {"j":[document.getElementById("img-elfJL"),document.getElementById("img-elfJR")],
+    "w1":[document.getElementById("img-elfWL1"),document.getElementById("img-elfWR1")],
+    "w2":[document.getElementById("img-elfWL2"),document.getElementById("img-elfWR2")]
     }
     this.dirs = {
       left: 0,
       right: 1
     }
-    this.mstate = "s";
+    this.mstate = "w1";
     let num = Math.floor(Math.random() * 2)
     if (num === 0){this.dir = this.dirs.right}
     else {this.dir = this.dirs.left}
     this.image = this.images[this.mstate][this.dir]
     this.height = 60
     this.width = 40
+    this.count = 0
     this.legSpeed = 12
     this.canJump = false
     this.speed = {
@@ -36,6 +36,15 @@ export default class Elf extends Sprite{
   }
   update(deltaTime) {
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
+    if (!this.canJump){this.mstate="j"}
+    else{
+      this.count++
+      if (this.count<this.legSpeed){this.mstate="w1"}
+      else if (this.count<2*this.legSpeed){this.mstate="w2"}
+      else {this.count=0}
+    }
+    console.log(this.mstate)
+    this.image = this.images[this.mstate][this.dir]
     this.speedControl()
     this.xDetect()
     super.update()
@@ -54,7 +63,6 @@ export default class Elf extends Sprite{
         this.speed.x = -1
       }
     }
-
   }
   xDetect(){
     if (this.realPos <=0){

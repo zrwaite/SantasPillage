@@ -20,7 +20,7 @@ export default class Game {
     this.level = 0 //starting level is 0
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
-    this.numPlayers = 2
+    this.numPlayers = 1
     this.hitbox = 0
     this.hvHandicap = 0
     this.objects = [] //Used to store all game objects from level generator

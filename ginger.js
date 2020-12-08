@@ -2,20 +2,15 @@ import Sprite from "./sprite.js"
 export default class Ginger extends Sprite{
   constructor(...args){
     super(...args)
-    this.images = {"s":[document.getElementById("img-ginger"),document.getElementById("img-ginger")],
-    "j":[document.getElementById("img-ginger"),document.getElementById("img-ginger")],
-    "wl":[document.getElementById("img-ginger"),document.getElementById("img-ginger")],
-    "wr":[document.getElementById("img-ginger"),document.getElementById("img-ginger")]
-    }
+    this.images = [document.getElementById("img-gingerL"),document.getElementById("img-gingerR")]
     this.dirs = {
       left: 0,
       right: 1
     }
-    this.mstate = "s";
     let num = Math.floor(Math.random() * 2)
     if (num === 0){this.dir = this.dirs.right}
     else {this.dir = this.dirs.left}
-    this.image = this.images[this.mstate][this.dir]
+    this.image = this.images[this.dir]
     this.height = 100
     this.width = 60
     this.legSpeed = 12
@@ -38,6 +33,7 @@ export default class Ginger extends Sprite{
   }
   update(deltaTime) {
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
+    this.image = this.images[this.dir]
     this.speedControl()
     this.xDetect()
     super.update()
