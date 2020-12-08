@@ -6,8 +6,7 @@ import Block from "./block.js"
 import Door from "./door.js"
 import Display from "./display.js"
 import Bg from "./bg.js"
-import { onePBuild, onePLevels} from "./1PLevels.js"
-import { twoPBuild, twoPLevels} from "./2PLevels.js"
+import {build, levels} from "./levels.js"
 
 export default class Game {
   constructor(gameWidth, gameHeight) {
@@ -15,12 +14,11 @@ export default class Game {
     this.height = gameHeight
     this.gravity = 1-(0.3)
     this.fric = 1-(0.4) //Friction
-    this.onePLevels = onePLevels
-    this.twoPLevels = twoPLevels
-    this.level = 0 //starting level is 0
+    this.levels = levels
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
     this.numPlayers = 1
+    this.level = 0//starting level is 0
     this.hitbox = 0
     this.hvHandicap = 0
     this.objects = [] //Used to store all game objects from level generator
@@ -55,8 +53,7 @@ export default class Game {
     [...this.persons, ...this.blocks, ...this.doors, ...this.elves, ...this.gingers].forEach((object) => object = null)
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator
-    if (this.numPlayers === 1){this.objects = onePBuild(this, this.onePLevels[this.level])}
-    else {this.objects = twoPBuild(this, this.twoPLevels[this.level])}
+    this.objects = build(this, this.levels[this.numPlayers-1][this.level])
     this.persons = this.objects[0]
     this.blocks = this.objects[1]
     this.doors = this.objects[2]
@@ -64,8 +61,7 @@ export default class Game {
     this.gingers = this.objects[4]
     this.levelLen = this.objects[5] - 800
     this.inputs = [new Controller(this, this.persons[0])]
-    //Multiplayer:
-    if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}
+    if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}//Multiplayer:
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
@@ -94,17 +90,14 @@ export default class Game {
     if(!this.inputs[person.id-1].rPressed&&!this.inputs[person.id-1].lPressed){person.moving = false} //If left and right aren't pressed then they aren't moving
     let pPoss = []; //Array of player positions
     if ((person.realPos >= 450 && person.realPos<=450+this.levelLen)||(this.pos>0 && this.pos<this.levelLen)){
-      //This player in da zone
+      this.persons.forEach((object)=>pPoss.push(object.realPos)) //This player in da zone
+      if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
+      else{this.pos = Math.max(...pPoss) - 450}
+    } else if (this.pos>0 && this.pos<this.levelLen){//Other player in da zone
       this.persons.forEach((object)=>pPoss.push(object.realPos))
       if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
       else{this.pos = Math.max(...pPoss) - 450}
-    } else if (this.pos>0 && this.pos<this.levelLen){
-      //Other player in da zone
-      this.persons.forEach((object)=>pPoss.push(object.realPos))
-      if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
-      else{this.pos = Math.max(...pPoss) - 450}
-    } else {
-      //Nobody in da zone
+    } else {//Nobody in da zone
       if (this.pos >= this.levelLen){this.pos = this.levelLen}
       else if (this.pos <= 0){this.pos = 0}
     }
@@ -112,7 +105,7 @@ export default class Game {
     if (this.inputs[person.id-1].dir === "right"){person.dir = person.dirs.right}
   }
   elfGame(elf){
-    if (elf.realPos + elf.width >= this.levelLen+800){elf.dir = elf.dirs.left}
+    if(elf.realPos + elf.width >= this.levelLen+800){elf.dir = elf.dirs.left}
   }
   gingerGame(ginger){
     if (ginger.realPos + ginger.width >= this.levelLen+800){ginger.dir = ginger.dirs.left}
@@ -169,9 +162,7 @@ export default class Game {
         person.canJump = true
         person.pos.y = block.pos.y - person.height
         person.speed.y = 0;
-        if (!person.moving){
-          person.friction = person.blockFriction
-        }
+        if (!person.moving){person.friction = person.blockFriction}
         break
       case "left":
         person.realPos = block.realPos - person.width
@@ -237,7 +228,6 @@ export default class Game {
       case "bottom":
         ginger.pos.y = block.pos.y + block.height
         ginger.speed.y = 0
-        ginger.jump()
         break
     }
   }

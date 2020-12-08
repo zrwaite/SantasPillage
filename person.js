@@ -69,9 +69,7 @@ export default class Person extends Sprite{
   }
   xDetect(){
     //Horizontal bounds detection
-    if (this.realPos <=0){
-      this.realPos = 0
-    }
+    if (this.realPos <=0){this.realPos = 0}
   }
   left() {
     if (!this.moving){//Only sets speed to 1 at the beginning, then accelerates to max speed

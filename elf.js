@@ -43,7 +43,6 @@ export default class Elf extends Sprite{
       else if (this.count<2*this.legSpeed){this.mstate="w2"}
       else {this.count=0}
     }
-    console.log(this.mstate)
     this.image = this.images[this.mstate][this.dir]
     this.speedControl()
     this.xDetect()
@@ -51,17 +50,11 @@ export default class Elf extends Sprite{
   }
   speedControl(){
     if (this.dir === this.dirs.right){
-      if (this.canJump){
-        this.speed.x = this.speed.maxx
-      } else {
-        this.speed.x = 1
-      }
+      if (this.canJump){this.speed.x = this.speed.maxx}
+      else {this.speed.x = 1}
     } else {
-      if (this.canJump){
-        this.speed.x = -this.speed.maxx
-      } else {
-        this.speed.x = -1
-      }
+      if (this.canJump){this.speed.x = -this.speed.maxx}
+      else {this.speed.x = -1}
     }
   }
   xDetect(){
