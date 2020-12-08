@@ -20,7 +20,7 @@ export function build(game, level) {
           y: game.block.height * rowIndex
         }
         if (playeri < game.numPlayers+1){
-          blocks[0].push(new Person(game.info, playeri, pos))
+          blocks[0].push(new Person(game.players[playeri-1], game.info, playeri, pos))
         }
         playeri++
       } else if (block === 2) {

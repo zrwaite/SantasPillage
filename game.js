@@ -17,7 +17,8 @@ export default class Game {
     this.levels = levels
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
-    this.numPlayers = 1
+    this.numPlayers = 0
+    this.players = []
     this.level = 0//starting level is 0
     this.hitbox = 0
     this.hvHandicap = 0
@@ -50,6 +51,12 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
+    this.players = this.display.players;
+    this.numPlayers = 0
+    for(let i=0; i<this.players.length; i++){
+      if(this.players[i]!==null){this.numPlayers++}
+    }
+    if(!this.numPlayers){return}
     [...this.persons, ...this.blocks, ...this.doors, ...this.elves, ...this.gingers].forEach((object) => object = null)
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator

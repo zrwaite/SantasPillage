@@ -1,7 +1,9 @@
 import Sprite from "./sprite.js"
 export default class Person extends Sprite{
-  constructor(...args){
+  constructor(player, ...args){
     super(...args)
+    this.player = player
+    console.log(this.player)
     this.zac = {"s":[document.getElementById("img-zacSL"),document.getElementById("img-zacSR")],
     "j":[document.getElementById("img-zacJL"),document.getElementById("img-zacJR")],
     "w1":[document.getElementById("img-zacWL1"),document.getElementById("img-zacWR1")],
@@ -18,8 +20,8 @@ export default class Person extends Sprite{
     }
     this.mstate = "s"; //Movement State; Standing, Jumping, Walking animation
     this.dir = this.dirs.right //Which way they are looking
-    this.characters = {1:this.zac, 2:this.matt}
-    this.person = this.characters[this.id]
+    this.characters = [this.zac, this.matt]
+    this.person = this.characters[this.player]
     this.image = this.person[this.mstate][this.dir]
     this.height = 100
     this.width = 50
