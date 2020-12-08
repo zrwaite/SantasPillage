@@ -1,18 +1,19 @@
 var xpos = 0
 var ypos = 0
 var num = 0
-var zac1 = [document.getElementById("img-zacSR"), 80, 100, 50, 100]
-var matt1 = [document.getElementById("img-mattSR"), 260, 100, 50, 100]
-var kell1 = [document.getElementById("img-kellSR"), 80, 250, 50, 100]
-var grey1 = [document.getElementById("img-greySR"), 260, 250, 50, 100]
-var bella1 = [document.getElementById("img-bellaSR"), 80, 400, 50, 100]
-var weiqi1 = [document.getElementById("img-weiqiSR"), 260, 400, 50, 100]
-var zac2 = [document.getElementById("img-zacSL"), 490, 100, 50, 100]
-var matt2 = [document.getElementById("img-mattSL"), 670, 100, 50, 100]
-var kell2 = [document.getElementById("img-kellSL"), 490, 250, 50, 100]
-var grey2 = [document.getElementById("img-greySL"), 670, 250, 50, 100]
-var bella2 = [document.getElementById("img-bellaSL"), 490, 400, 50, 100]
-var weiqi2 = [document.getElementById("img-weiqiSL"), 670, 400, 50, 100]
+var pos = [430, 195]
+var zac1 = [document.getElementById("img-zacSR"), pos[0], pos[1], 50, 100]
+var matt1 = [document.getElementById("img-mattSR"), pos[0]+90, pos[1], 50, 100]
+var kell1 = [document.getElementById("img-kellSR"), pos[0], pos[1]+140, 50, 100]
+var grey1 = [document.getElementById("img-greySR"), pos[0]+90, pos[1]+140, 50, 100]
+var bella1 = [document.getElementById("img-bellaSR"), pos[0], pos[1]+280, 50, 100]
+var weiqi1 = [document.getElementById("img-weiqiSR"), pos[0]+90, pos[1]+280, 50, 100]
+var zac2 = [document.getElementById("img-zacSL"), pos[0]+200, pos[1], 50, 100]
+var matt2 = [document.getElementById("img-mattSL"), pos[0]+290, pos[1], 50, 100]
+var kell2 = [document.getElementById("img-kellSL"), pos[0]+200, pos[1]+140, 50, 100]
+var grey2 = [document.getElementById("img-greySL"), pos[0]+290, pos[1]+140, 50, 100]
+var bella2 = [document.getElementById("img-bellaSL"), pos[0]+200, pos[1]+280, 50, 100]
+var weiqi2 = [document.getElementById("img-weiqiSL"), pos[0]+290, pos[1]+280, 50, 100]
 var players = [zac1, matt1, kell1, grey1, bella1, weiqi1, zac2, matt2, kell2, grey2, bella2, weiqi2]
 var bgs = []
 for(let i=0; i<players.length; i++){bgs[i]='white'}
@@ -25,6 +26,9 @@ export default class Display{
     this.width = game.width
     this.height = game.height
     this.players = [null, null]
+    this.cropWidth = 2500
+    this.cropHeight = 2178
+    this.image = document.getElementById("img-wideBackground")
   }
   update(deltaTime){
     if (this.game.state === this.game.states.start) {
@@ -44,7 +48,7 @@ export default class Display{
         switch(i){
           case 0: case 1: case 2: case 3: case 4: case 5:
             for(let a=0; a<6; a++){
-              if(a===i){break}
+              if(a===i){continue}
               bgs[a] = 'white'
             }
             if(bgs[i]==='white'){
@@ -76,25 +80,30 @@ export default class Display{
   draw(ctx){
     //Menu Screen
     if (this.game.state === this.game.states.start) {
-      ctx.rect(0, 0, this.width, this.height)
-      ctx.fillStyle = "rgb(0, 0, 0)"
-      ctx.fill()
-      ctx.font = "30px Arial"
-      ctx.fillStyle = "white"
+      ctx.drawImage(this.image, 0, 0, this.cropWidth, this.cropHeight, 0, 0, this.game.width, this.game.height+2)
+      ctx.globalAlpha = 0.8
+      ctx.fillRect(20, 120, 360, 460)
+      ctx.globalAlpha = 1
+      ctx.font = "80px Copperplate"
+      ctx.fillStyle = "black"
       ctx.textAlign = "center"
-      ctx.fillText("Select Player One                     Select Player Two", this.width / 2, (this.height / 2)-250)
+      ctx.fillText("SANTA'S PILLAGE", 400, 75)
+      ctx.font = "30px Copperplate"
+      ctx.fillStyle = "black"
+      ctx.textAlign = "center"
+      ctx.fillText("Instructions:", 200, 160)
+      ctx.fillText("Player 1: WASD", 200, 250)
+      ctx.fillText("Player 2: ← ↑ → ↓", 200, 300)
+      ctx.fillText("Avoid or Kill Enemies", 200, 350)
+      ctx.fillText("P to Pause", 200, 400)
+      ctx.fillText("Select Characters →", 200, 450)
+      ctx.fillText("Space to Start", 200, 500)
+      ctx.fillText("Player 1      Player 2", 600, 160)
       for(let i=0; i<players.length; i++){
         ctx.fillStyle=bgs[i]
         ctx.fillRect(players[i][1]-10, players[i][2]-10, players[i][3]+20, players[i][4]+20)
         ctx.drawImage(players[i][0], players[i][1], players[i][2], players[i][3], players[i][4])
       }
-      /*
-      ctx.fillStyle = "white"
-      ctx.fillText("P to Pause", this.width / 2, (this.height / 2)-50)
-      ctx.fillText("Use the W-A-D arrow keys to move", this.width / 2, (this.height / 2))
-      ctx.fillText("Avoid enemies, make it to the door", this.width / 2, (this.height / 2)+50)
-      ctx.fillText("PosX: " + xpos + " PosY: " + ypos, this.width/2, (this.height/2)+100)
-      */
     }
     //Paused Screen
     else if (this.game.state === this.game.states.paused) {
