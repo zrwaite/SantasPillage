@@ -14,13 +14,33 @@ export default class Person extends Sprite{
     "w1":[document.getElementById("img-mattWL1"),document.getElementById("img-mattWR1")],
     "w2":[document.getElementById("img-mattWL2"),document.getElementById("img-mattWR2")]
     }
+    this.kell = {"s":[document.getElementById("img-kellSL"),document.getElementById("img-kellSR")],
+    "j":[document.getElementById("img-kellJL"),document.getElementById("img-kellJR")],
+    "w1":[document.getElementById("img-kellWL1"),document.getElementById("img-kellWR1")],
+    "w2":[document.getElementById("img-kellWL2"),document.getElementById("img-kellWR2")]
+    }
+    this.grey = {"s":[document.getElementById("img-greySL"),document.getElementById("img-greySR")],
+    "j":[document.getElementById("img-greyJL"),document.getElementById("img-greyJR")],
+    "w1":[document.getElementById("img-greyWL1"),document.getElementById("img-greyWR1")],
+    "w2":[document.getElementById("img-greyWL2"),document.getElementById("img-greyWR2")]
+    }
+    this.bella = {"s":[document.getElementById("img-bellaSL"),document.getElementById("img-bellaSR")],
+    "j":[document.getElementById("img-bellaJL"),document.getElementById("img-bellaJR")],
+    "w1":[document.getElementById("img-bellaWL1"),document.getElementById("img-bellaWR1")],
+    "w2":[document.getElementById("img-bellaWL2"),document.getElementById("img-bellaWR2")]
+    }
+    this.weiqi = {"s":[document.getElementById("img-weiqiSL"),document.getElementById("img-weiqiSR")],
+    "j":[document.getElementById("img-weiqiJL"),document.getElementById("img-weiqiJR")],
+    "w1":[document.getElementById("img-weiqiWL1"),document.getElementById("img-weiqiWR1")],
+    "w2":[document.getElementById("img-weiqiWL2"),document.getElementById("img-weiqiWR2")]
+    }
     this.dirs = {
       left: 0,
       right: 1
     }
     this.mstate = "s"; //Movement State; Standing, Jumping, Walking animation
     this.dir = this.dirs.right //Which way they are looking
-    this.characters = [this.zac, this.matt]
+    this.characters = [this.zac, this.matt, this.kell, this.grey, this.bella, this.weiqi]
     this.person = this.characters[this.player]
     this.image = this.person[this.mstate][this.dir]
     this.height = 100

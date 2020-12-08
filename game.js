@@ -55,6 +55,7 @@ export default class Game {
     this.numPlayers = 0
     for(let i=0; i<this.players.length; i++){
       if(this.players[i]!==null){this.numPlayers++}
+      else{break}
     }
     if(!this.numPlayers){return}
     [...this.persons, ...this.blocks, ...this.doors, ...this.elves, ...this.gingers].forEach((object) => object = null)

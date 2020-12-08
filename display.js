@@ -2,11 +2,21 @@ var xpos = 0
 var ypos = 0
 var num = 0
 var zac1 = [document.getElementById("img-zacSR"), 80, 100, 50, 100]
-var zac2 = [document.getElementById("img-zacSL"), 490, 100, 50, 100]
 var matt1 = [document.getElementById("img-mattSR"), 260, 100, 50, 100]
+var kell1 = [document.getElementById("img-kellSR"), 80, 250, 50, 100]
+var grey1 = [document.getElementById("img-greySR"), 260, 250, 50, 100]
+var bella1 = [document.getElementById("img-bellaSR"), 80, 400, 50, 100]
+var weiqi1 = [document.getElementById("img-weiqiSR"), 260, 400, 50, 100]
+var zac2 = [document.getElementById("img-zacSL"), 490, 100, 50, 100]
 var matt2 = [document.getElementById("img-mattSL"), 670, 100, 50, 100]
-var players = [zac1, matt1, zac2, matt2]
-var bgs = ['white', 'white', 'white', 'white']
+var kell2 = [document.getElementById("img-kellSL"), 490, 250, 50, 100]
+var grey2 = [document.getElementById("img-greySL"), 670, 250, 50, 100]
+var bella2 = [document.getElementById("img-bellaSL"), 490, 400, 50, 100]
+var weiqi2 = [document.getElementById("img-weiqiSL"), 670, 400, 50, 100]
+var players = [zac1, matt1, kell1, grey1, bella1, weiqi1, zac2, matt2, kell2, grey2, bella2, weiqi2]
+var bgs = []
+for(let i=0; i<players.length; i++){bgs[i]='white'}
+
 var loc = false
 
 export default class Display{
@@ -28,33 +38,36 @@ export default class Display{
   set(){
     xpos = loc.clientX-6
     ypos = loc.clientY-6
+    loc = false
     for(let i=0; i<players.length; i++){
       if(xpos>players[i][1]-10 && xpos<players[i][1]+players[i][3]+10 && ypos>players[i][2]-10 && ypos<players[i][2]+players[i][4]+10){
         switch(i){
-          case 0:
-            this.players[0] = 0
-            bgs[0] = 'yellow'
-            bgs[1] = 'white'
-            break
-          case 1:
-            this.players[0] = 1
-            bgs[1] = 'yellow'
-            bgs[0] = 'white'
-            break
-          case 2:
-            this.players[1] = 0
-            bgs[2] = 'yellow'
-            bgs[3] = 'white'
-            break
-          case 3:
-            this.players[1] = 1
-            bgs[3] = 'yellow'
-            bgs[2] = 'white'
-            break
-          default:
-            for(let i=0; i<bgs.length; i++){
+          case 0: case 1: case 2: case 3: case 4: case 5:
+            for(let a=0; a<6; a++){
+              if(a===i){break}
+              bgs[a] = 'white'
+            }
+            if(bgs[i]==='white'){
+              this.players[0] = i
+              bgs[i] = 'yellow'
+            } else{
+              this.players[0] = null
               bgs[i] = 'white'
             }
+            break
+          case 6: case 7: case 8: case 9: case 10: case 11:
+            for(let a=6; a<12; a++){
+              if(a===i){break}
+              bgs[a] = 'white'
+            }
+            if(bgs[i]==='white'){
+              this.players[1] = i-6
+              bgs[i] = 'yellow'
+            } else{
+              this.players[1] = null
+              bgs[i] = 'white'
+            }
+            break
         }
       }
     }
@@ -70,23 +83,18 @@ export default class Display{
       ctx.fillStyle = "white"
       ctx.textAlign = "center"
       ctx.fillText("Select Player One                     Select Player Two", this.width / 2, (this.height / 2)-250)
-      ctx.fillStyle = bgs[0]
-      ctx.fillRect(zac1[1]-10, zac1[2]-10, zac1[3]+20, zac1[4]+20)
-      ctx.drawImage(zac1[0], zac1[1], zac1[2], zac1[3], zac1[4])
-      ctx.fillStyle = bgs[1]
-      ctx.fillRect(matt1[1]-10, matt1[2]-10, matt1[3]+20, matt1[4]+20)
-      ctx.drawImage(matt1[0], matt1[1], matt1[2], matt1[3], matt1[4])
-      ctx.fillStyle = bgs[2]
-      ctx.fillRect(zac2[1]-10, zac2[2]-10, zac2[3]+20, zac2[4]+20)
-      ctx.drawImage(zac2[0], zac2[1], zac2[2], zac2[3], zac2[4])
-      ctx.fillStyle = bgs[3]
-      ctx.fillRect(matt2[1]-10, matt2[2]-10, matt2[3]+20, matt2[4]+20)
-      ctx.drawImage(matt2[0], matt2[1], matt2[2], matt2[3], matt2[4])
+      for(let i=0; i<players.length; i++){
+        ctx.fillStyle=bgs[i]
+        ctx.fillRect(players[i][1]-10, players[i][2]-10, players[i][3]+20, players[i][4]+20)
+        ctx.drawImage(players[i][0], players[i][1], players[i][2], players[i][3], players[i][4])
+      }
+      /*
       ctx.fillStyle = "white"
       ctx.fillText("P to Pause", this.width / 2, (this.height / 2)-50)
       ctx.fillText("Use the W-A-D arrow keys to move", this.width / 2, (this.height / 2))
       ctx.fillText("Avoid enemies, make it to the door", this.width / 2, (this.height / 2)+50)
       ctx.fillText("PosX: " + xpos + " PosY: " + ypos, this.width/2, (this.height/2)+100)
+      */
     }
     //Paused Screen
     else if (this.game.state === this.game.states.paused) {
