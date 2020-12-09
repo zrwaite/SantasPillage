@@ -61,7 +61,7 @@ export default class Display{
             break
           case 6: case 7: case 8: case 9: case 10: case 11:
             for(let a=6; a<12; a++){
-              if(a===i){break}
+              if(a===i){continue}
               bgs[a] = 'white'
             }
             if(bgs[i]==='white'){
@@ -82,6 +82,7 @@ export default class Display{
     if (this.game.state === this.game.states.start) {
       ctx.drawImage(this.image, 0, 0, this.cropWidth, this.cropHeight, 0, 0, this.game.width, this.game.height+2)
       ctx.globalAlpha = 0.8
+      ctx.fillStyle='white'
       ctx.fillRect(20, 120, 360, 460)
       ctx.globalAlpha = 1
       ctx.font = "80px Copperplate"
@@ -97,7 +98,8 @@ export default class Display{
       ctx.fillText("Avoid or Kill Enemies", 200, 350)
       ctx.fillText("P to Pause", 200, 400)
       ctx.fillText("Select Characters →", 200, 450)
-      ctx.fillText("Space to Start", 200, 500)
+      ctx.fillText("& Number of Players", 200, 480)
+      ctx.fillText("Space to Start", 200, 530)
       ctx.fillText("Player 1      Player 2", 600, 160)
       for(let i=0; i<players.length; i++){
         ctx.fillStyle=bgs[i]
