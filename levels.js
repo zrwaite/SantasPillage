@@ -4,6 +4,7 @@ import Person from "./person.js"
 import Elf from "./elf.js"
 import Ginger from "./ginger.js"
 import Cane from "./cane.js"
+import Icicle from "./icicle.js"
 
 export function build(game, level) {
   let playeri = 1
