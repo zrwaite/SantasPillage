@@ -29,6 +29,7 @@ export default class Game {
     this.elves = []
     this.gingers = []
     this.canes = []
+    this.icicles=[]
     this.inputs = []
     this.info = {
       width:this.width,
@@ -68,7 +69,8 @@ export default class Game {
     this.elves = this.objects[3]
     this.gingers = this.objects[4]
     this.canes = this.objects[5]
-    this.levelLen = this.objects[6] - 800
+    this.icicles=this.objects[6]
+    this.levelLen = this.objects[7] - 800
     this.inputs = [new Controller(this, this.persons[0])]
     if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}//Multiplayer:
     this.pos = 0 //Resets map position
@@ -76,7 +78,7 @@ export default class Game {
   update(deltaTime) {
     if (this.state===this.states.start){this.display.update(deltaTime)}
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
-    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.doors, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
+    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
     this.objectGame()
     this.persons.forEach((person)=>this.personGame(person))
     this.elves.forEach((elf)=>this.elfGame(elf))
@@ -86,10 +88,10 @@ export default class Game {
   }
   draw(ctx) {
     if (this.state===this.states.start){this.display.draw(ctx)}
-    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.doors, this.display].forEach((object) => object.draw(ctx))//Draws all objects
+    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
   objectGame(){
-    [...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.doors].forEach((object)=>(object.pos.x=object.realPos-this.pos));
+    [...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors].forEach((object)=>(object.pos.x=object.realPos-this.pos));
   }
   personGame(person){
     if(this.inputs[person.id-1].uPressed){person.jump()}
