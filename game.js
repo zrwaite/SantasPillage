@@ -33,7 +33,7 @@ export default class Game {
     this.deers=[]
     this.snowballi=0
     this.snowballs=[]
-    this.angels=[]
+    this.cookies=[]
     this.inputs = []
     this.info = {
       width:this.width,
@@ -79,11 +79,11 @@ export default class Game {
     this.snowballi=0
     this.snowballs=[]
     this.deers=this.objects[8]
-    this.angels=this.objects[9]
-    this.collect=this.angels.length
+    this.cookies=this.objects[9]
+    this.collect=this.cookies.length
     this.levelLen = this.objects[10] - 800
     this.objects = [...this.blocks, ...this.doors, ...this.persons, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles]
-    this.delObjects = [...this.snowballs, ...this.angels] //Objects that can be deleted
+    this.delObjects = [...this.snowballs, ...this.cookies] //Objects that can be deleted
     this.inputs = [new Controller(this, this.persons[0])]
     if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}//Multiplayer:
     this.pos = 0 //Resets map position
@@ -94,6 +94,8 @@ export default class Game {
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
     [...this.objects, ...this.delObjects].forEach((object)=>(object.pos.x=object.realPos-this.pos));
     this.delObjects=this.delObjects.filter(this.deleter)
+    this.cookies=this.cookies.filter(this.deleter)
+    this.snowballs=this.snowballs.filter(this.deleter)
     this.persons.forEach((person)=>this.personGame(person))
     this.elves.forEach((elf)=>this.elfGame(elf))
     this.gingers.forEach((ginger)=>this.gingerGame(ginger))
@@ -102,7 +104,7 @@ export default class Game {
     this.snowmen.forEach((snowman)=>this.snowmanGame(snowman))
     this.snowballs.forEach((snowball)=>this.snowballGame(snowball))
     this.deers.forEach((deer)=>this.deerGame(deer))
-    this.angels.forEach((angel)=>this.angelGame(angel))
+    this.cookies.forEach((cookie)=>this.cookieGame(cookie))
     this.doors.forEach((door)=>this.doorGame(door))
     this.blocks.forEach((block)=>this.blockGame(block))
   }
@@ -112,7 +114,6 @@ export default class Game {
   }
   deleter(sprite){
     if(sprite.delete){
-      sprite = null
       return false
     }
     else {return true}
@@ -233,8 +234,8 @@ export default class Game {
       }
     }
   }
-  angelGame(angel){
-    this.persons.forEach((person)=>this.personAngel(person, angel))
+  cookieGame(cookie){
+    this.persons.forEach((person)=>this.personCookie(person, cookie))
   }
   caneGame(cane){}
   blockGame(block){}
@@ -247,7 +248,7 @@ export default class Game {
   elfBlock(elf, block){
     let spot = false
     if(block.covered){spot = this.detector(elf, block, 2, 0)}
-    else{spot = this.detector(elf, block, -1, 1)}
+    else{spot = this.detector(elf, block, -1, -1)}
     if(spot){this.spriteBlock(elf, block, spot)}
   }
   gingerBlock(ginger, block){
@@ -273,10 +274,11 @@ export default class Game {
     let spot = this.detector(deer, block, 100, -3)
     if(spot!==false){deer.detect=true}
   }
-  personAngel(person, angel){
+  personCookie(person, cookie){
+    console.log(this.collect)
     let hitbox = 5
-    if (person.pos.y + person.height > angel.pos.y -hitbox && person.pos.y < angel.pos.y + angel.height + hitbox && person.realPos + person.width > angel.realPos - hitbox && person.realPos < angel.realPos + angel.width + hitbox){
-      angel.delete = true
+    if (person.pos.y + person.height > cookie.pos.y -hitbox && person.pos.y < cookie.pos.y + cookie.height + hitbox && person.realPos + person.width > cookie.realPos - hitbox && person.realPos < cookie.realPos + cookie.width + hitbox){
+      cookie.delete = true
       this.collect--
     }
   }

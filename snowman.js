@@ -13,15 +13,6 @@ export default class Snowman extends Sprite {
     this.throw = false
     this.wait = Math.floor(Math.random() * 100)+100
   }
-  /*
-  detector(sprite, block){
-    if (sprite.pos.y + sprite.height > block.pos.y && sprite.pos.y < block.pos.y + block.height && sprite.pos.x + sprite.width > block.pos.x && sprite.pos.x < block.pos.x + block.width){
-      this.dead = true
-      this.image = this.images[3]
-      this.height = 55
-    }
-  }
-  */
   update() {
     if (!this.dead) {
       this.count++

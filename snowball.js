@@ -2,7 +2,11 @@ import Sprite from "./sprite.js"
 export default class Snowball extends Sprite{
   constructor(...args){
     super(...args)
-    this.images = [document.getElementById('img-snowball1'), document.getElementById('img-snowball2'), document.getElementById('img-snowball3'), document.getElementById('img-snowball4'), ]
+    this.images = [
+      document.getElementById('img-snowball1'),
+      document.getElementById('img-snowball2'),
+      document.getElementById('img-snowball3'),
+      document.getElementById('img-snowball4'), ]
     this.dirs = {
       left: -1,
       right: 1

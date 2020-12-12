@@ -100,13 +100,14 @@ export default class Display{
       ctx.fillStyle = "black"
       ctx.textAlign = "center"
       ctx.fillText("Instructions:", 200, 160)
-      ctx.fillText("Player 1: WASD", 200, 250)
-      ctx.fillText("Player 2: ← ↑ → ↓", 200, 300)
-      ctx.fillText("Avoid or Kill Enemies", 200, 350)
-      ctx.fillText("P to Pause", 200, 400)
-      ctx.fillText("Select Characters →", 200, 450)
-      ctx.fillText("& Number of Players", 200, 480)
-      ctx.fillText("Space to Start", 200, 530)
+      ctx.fillText("Player 1: WASD", 200, 230)
+      ctx.fillText("Player 2: ← ↑ → ↓", 200, 280)
+      ctx.fillText("Avoid or Kill Enemies", 200, 330)
+      ctx.fillText("Collect Cookies", 200, 380)
+      ctx.fillText("P to Pause", 200, 430)
+      ctx.fillText("Select Characters →", 200, 480)
+      ctx.fillText("& Number of Players", 200, 510)
+      ctx.fillText("Space to Start", 200, 560)
       ctx.fillText("Player 1      Player 2", 600, 160)
       for(let i=0; i<players.length; i++){
         ctx.fillStyle=bgs[i]
