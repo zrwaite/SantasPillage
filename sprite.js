@@ -17,6 +17,12 @@ export default class Sprite{
     this.height = 100
     this.width = 50
     this.lives = 1
+    this.detects = {
+      top:false,
+      left:false,
+      right:false,
+      bottom:false
+    }
     this.speed = {
       x:0,
       y:0,

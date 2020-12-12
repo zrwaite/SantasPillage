@@ -5,11 +5,12 @@ export default class Icicle{
     this.realPos = Math.abs(this.pos.x)
     this.speed=0
     this.gravity=this.info.gravity
-    this.falling=true
+    this.falling=false
+    this.detect=false
     this.images = {
-    "i1":document.getElementById("img-icicle1"),
-    "i2":document.getElementById("img-icicle2"),
-    "i3":document.getElementById("img-icicle3")
+      "i1":document.getElementById("img-icicle1"),
+      "i2":document.getElementById("img-icicle1"),
+      "i3":document.getElementById("img-icicle2")
     }
     this.mstate = "i1";
     this.image = this.images[this.mstate]
@@ -17,23 +18,37 @@ export default class Icicle{
     this.width = 40
   }
   update(deltaTime) {
-    if(false) {
-      this.mstate="i2"
-    }
-    //else {this.mstate="i3"}
     if(this.falling) {
+      this.detector()
       this.speed+=this.gravity
       this.pos.y+=this.speed
       if(this.pos.y+this.height>this.info.height) {
-        this.falling=false
-        this.height=30
+        this.detect=true
+        this.height=10
         this.pos.y=this.info.height-this.height
-        this.speed=0
-        this.mstate="i3"
+      }
+    }
+    else if(this.mstate==='i2'){
+      if(this.height>10){
+        this.height-=20
+        this.pos.y+=20
+      }
+      else{
+        this.pos.y+=this.height-10
+        this.height=10
+        this.mstate='i3'
       }
     }
     this.image = this.images[this.mstate]
   }
 
-draw(ctx) {ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)}
+  draw(ctx) {ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)}
+  detector(){
+    if(this.detect){
+      this.speed = 0;
+      this.gravity = 0;
+      this.falling=false
+      this.mstate="i2"
+    }
+  }
 }

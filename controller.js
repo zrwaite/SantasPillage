@@ -9,7 +9,8 @@ export default class Controller {
     this.dir = "right"
     this.controls = {
       1: [65, 87, 68],
-      2: [37, 38, 39]
+      2: [37, 38, 39],
+      3: [86, 71, 78]
     }
     document.addEventListener("keydown", (event) => {
       switch (event.keyCode) {

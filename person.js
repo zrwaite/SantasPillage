@@ -3,7 +3,6 @@ export default class Person extends Sprite{
   constructor(player, ...args){
     super(...args)
     this.player = player
-    console.log(this.player)
     this.zac = {"s":[document.getElementById("img-zacSL"),document.getElementById("img-zacSR")],
     "j":[document.getElementById("img-zacJL"),document.getElementById("img-zacJR")],
     "w1":[document.getElementById("img-zacWL1"),document.getElementById("img-zacWR1")],
@@ -39,6 +38,7 @@ export default class Person extends Sprite{
       right: 1
     }
     this.mstate = "s"; //Movement State; Standing, Jumping, Walking animation
+    this.lstate = 0 //Life State, either alive, injured, or dead
     this.dir = this.dirs.right //Which way they are looking
     this.characters = [this.zac, this.matt, this.kell, this.grey, this.bella, this.weiqi]
     this.person = this.characters[this.player]
@@ -46,7 +46,7 @@ export default class Person extends Sprite{
     this.height = 100
     this.width = 50
     this.count = 0
-    this.legSpeed = 12 //time between the walking animation frames
+    this.legSpeed = 10 //time between the walking animation frames
     this.lives = 3
     this.canJump = false //Is true when there is ground under you
     this.moving = false //If you are moving left or right with the controls
@@ -77,7 +77,7 @@ export default class Person extends Sprite{
     }
     this.image = this.person[this.mstate][this.dir]
     this.speedControl()
-    this.xDetect()
+    this.detector()
     super.update()
   }
   speedControl(){
@@ -89,9 +89,21 @@ export default class Person extends Sprite{
       this.speed.x *= this.accel
     }
   }
-  xDetect(){
+  detector(){
     //Horizontal bounds detection
     if (this.realPos <=0){this.realPos = 0}
+    if (this.detects.top){
+      this.canJump = true
+      this.speed.y = 0;
+      if (!this.moving){this.friction = this.blockFriction}
+    }
+    if (this.detects.left||this.detects.right){
+      if(this.moving){this.speed.x = 0}
+      this.moving = false
+    }
+    if(this.detects.bottom){
+      this.speed.y = 0
+    }
   }
   left() {
     if (!this.moving){//Only sets speed to 1 at the beginning, then accelerates to max speed
@@ -127,5 +139,10 @@ export default class Person extends Sprite{
       this.speed.y = -this.speed.maxy
       this.canJump = false
     }
+  }
+  draw(ctx) {
+    if(this.lstate===1){ctx.globalAlpha = 0.5}
+    ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)
+    ctx.globalAlpha = 1
   }
 }

@@ -35,33 +35,25 @@ export default class Ginger extends Sprite{
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     this.image = this.images[this.dir]
     this.speedControl()
-    this.xDetect()
+    this.detector()
+    this.jump()
     super.update()
   }
   speedControl(){
-    if (this.dir === this.dirs.right){
-      if (this.canJump){
-        this.speed.x = this.speed.maxx
-        this.jump()
-      } else {
-        this.speed.x = 4
-        this.jump()
-      }
-    } else {
-      if (this.canJump){
-        this.speed.x = -this.speed.maxx
-        this.jump()
-      } else {
-        this.speed.x = -4
-        this.jump()
-      }
-    }
+    if (this.canJump){this.speed.x = this.speed.maxx*(this.dir-0.5)*2}
+    else {this.speed.x = 4*(this.dir-0.5)*2}
   }
-  xDetect(){
+  detector(){
     if (this.realPos <=0){
       this.realPos = 0
       this.dir = this.dirs.right
     }
+    if(this.detects.top){
+      this.canJump = true
+      this.jump()
+    }
+    if(this.detects.left||this.detects.right){this.speed.x = 0}
+    if(this.detects.bottom){this.speed.y = 0}
   }
   jump() {
     if (this.canJump) {

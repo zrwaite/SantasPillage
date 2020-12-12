@@ -13,7 +13,7 @@ export default class Bg{
   }
   draw(ctx){
     ctx.save()
-    ctx.globalAlpha = 0.5
+    ctx.globalAlpha = 0.6
     ctx.drawImage(this.image, this.game.pos, 0, this.cropWidth, this.cropHeight, 0, 0, this.width, this.height+2);
     ctx.restore();
   }

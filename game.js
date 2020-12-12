@@ -1,28 +1,27 @@
 import Input from "./input.js"
 import Controller from "./controller.js"
-import Sprite from "./sprite.js"
-import Person from "./person.js"
 import Block from "./block.js"
-import Door from "./door.js"
+import Snowball from "./snowball.js"
 import Display from "./display.js"
 import Bg from "./bg.js"
 import {build, levels} from "./levels.js"
 
 export default class Game {
-  constructor(gameWidth, gameHeight) {
-    this.width = gameWidth
-    this.height = gameHeight
-    this.gravity = 1-(0.3)
-    this.fric = 1-(0.4) //Friction
+  constructor(width, height) {
+    this.width = width
+    this.height = height
+    this.gravity = 0.7
+    this.fric = 0.6 //Friction
     this.levels = levels
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
-    this.numPlayers = 0
-    this.players = []
     this.level = 0//starting level is 0
-    this.hitbox = 0
-    this.hvHandicap = 0
+    this.deletes=0
+    this.numPlayers = 0
+    this.collect = 0
+    this.players = []
     this.objects = [] //Used to store all game objects from level generator
+    this.delObjects = []
     this.persons = []
     this.blocks = []
     this.doors = []
@@ -30,6 +29,11 @@ export default class Game {
     this.gingers = []
     this.canes = []
     this.icicles=[]
+    this.snowmen=[]
+    this.deers=[]
+    this.snowballi=0
+    this.snowballs=[]
+    this.angels=[]
     this.inputs = []
     this.info = {
       width:this.width,
@@ -45,21 +49,22 @@ export default class Game {
       win: 4
     } //All of the game states
     this.state = this.states.start //Default is the start screen
-    this.sprite = new Sprite(this.info, 0, null)
     this.block = new Block(this.info, 0, null) //Declare with null position to pull information from without drawing on screen
     this.bg = new Bg(this) //Background
     this.display = new Display(this) //Display (this.states controls this)
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
-    this.players = this.display.players;
+    this.deletes=0
+    this.players = this.display.players
     this.numPlayers = 0
     for(let i=0; i<this.players.length; i++){
       if(this.players[i]!==null){this.numPlayers++}
       else{break}
     }
     if(!this.numPlayers){return}
-    [...this.persons, ...this.blocks, ...this.doors, ...this.elves, ...this.gingers].forEach((object) => object = null)
+    this.objects.forEach((object) => object = null)
+    this.delObjects.forEach((object) => object = null)
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator
     this.objects = build(this, this.levels[this.numPlayers-1][this.level])
@@ -70,7 +75,15 @@ export default class Game {
     this.gingers = this.objects[4]
     this.canes = this.objects[5]
     this.icicles=this.objects[6]
-    this.levelLen = this.objects[7] - 800
+    this.snowmen=this.objects[7]
+    this.snowballi=0
+    this.snowballs=[]
+    this.deers=this.objects[8]
+    this.angels=this.objects[9]
+    this.collect=this.angels.length
+    this.levelLen = this.objects[10] - 800
+    this.objects = [...this.blocks, ...this.doors, ...this.persons, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles]
+    this.delObjects = [...this.snowballs, ...this.angels] //Objects that can be deleted
     this.inputs = [new Controller(this, this.persons[0])]
     if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}//Multiplayer:
     this.pos = 0 //Resets map position
@@ -78,48 +91,101 @@ export default class Game {
   update(deltaTime) {
     if (this.state===this.states.start){this.display.update(deltaTime)}
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
-    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
-    this.objectGame()
+    [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
+    [...this.objects, ...this.delObjects].forEach((object)=>(object.pos.x=object.realPos-this.pos));
+    this.delObjects=this.delObjects.filter(this.deleter)
     this.persons.forEach((person)=>this.personGame(person))
     this.elves.forEach((elf)=>this.elfGame(elf))
     this.gingers.forEach((ginger)=>this.gingerGame(ginger))
+    this.canes.forEach((cane)=>this.caneGame(cane))
+    this.icicles.forEach((icicle)=>this.icicleGame(icicle))
+    this.snowmen.forEach((snowman)=>this.snowmanGame(snowman))
+    this.snowballs.forEach((snowball)=>this.snowballGame(snowball))
+    this.deers.forEach((deer)=>this.deerGame(deer))
+    this.angels.forEach((angel)=>this.angelGame(angel))
     this.doors.forEach((door)=>this.doorGame(door))
     this.blocks.forEach((block)=>this.blockGame(block))
   }
   draw(ctx) {
-    if (this.state===this.states.start){this.display.draw(ctx)}
-    [this.bg, ...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors, this.display].forEach((object) => object.draw(ctx))//Draws all objects
+    if (this.state===this.states.start){this.display.draw(ctx);return}
+    [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
-  objectGame(){
-    [...this.persons, ...this.elves, ...this.gingers, ...this.blocks, ...this.canes, ...this.icicles, ...this.doors].forEach((object)=>(object.pos.x=object.realPos-this.pos));
+  deleter(sprite){
+    if(sprite.delete){
+      sprite = null
+      return false
+    }
+    else {return true}
+  }
+  detector(sprite, block, hitbox=0, hvhandicap=0){
+    //Bigger HVHandicap means more likely to be horizontal detection
+    if (sprite.pos.y + sprite.height > block.pos.y -hitbox && sprite.pos.y < block.pos.y + block.height + hitbox && sprite.realPos + sprite.width > block.realPos - hitbox && sprite.realPos < block.realPos + block.width + hitbox){
+      let dl = sprite.realPos+sprite.width-block.realPos - hvhandicap + hitbox
+      let dr = block.realPos+block.width-sprite.realPos - hvhandicap - hitbox
+      let dt = sprite.pos.y+sprite.height-block.pos.y + hvhandicap + hitbox
+      let db = block.pos.y+block.height-sprite.pos.y + hvhandicap - hitbox
+      if (dl<dt && dl< db){return "left"}
+      else if (dr<dt && dr<db){return "right"}
+      else if (dt<db){return "top"}
+      else{return "bottom"}
+    }
+    return false
+  }
+  spriteBlock(sprite, block, spot){
+    switch (String(spot)) {
+      case "top":
+        sprite.detects.top=true
+        sprite.pos.y=block.pos.y-sprite.height
+        break
+      case "left":
+        sprite.detects.left=true
+        sprite.realPos=block.realPos-sprite.width
+        break
+      case "right":
+        sprite.detects.right=true
+        sprite.realPos=block.realPos+block.width
+        break
+      case "bottom":
+        sprite.detects.bottom=true
+        sprite.pos.y=block.pos.y+block.height
+        break
+    }
+  }
+  verticalDetector(person, icicle){
+    let hitbox = 40
+    if(person.pos.y>icicle.pos.y && person.realPos + person.width > icicle.realPos - hitbox && person.realPos < icicle.realPos + icicle.width + hitbox){
+      icicle.falling = true
+    }
   }
   personGame(person){
+    person.detects.top=person.detects.left=person.detects.right=person.detects.bottom=false
+    this.blocks.forEach((block)=>this.personBlock(person, block))
     if(this.inputs[person.id-1].uPressed){person.jump()}
     if(this.inputs[person.id-1].lPressed){person.left()}
     if(this.inputs[person.id-1].rPressed){person.right()}
-    if (person.realPos + person.width >= this.width+this.pos){person.realPos = this.width - person.width + this.pos}
     if(!this.inputs[person.id-1].rPressed&&!this.inputs[person.id-1].lPressed){person.moving = false} //If left and right aren't pressed then they aren't moving
+    if (this.inputs[person.id-1].dir === "left"){person.dir = person.dirs.left}
+    if (this.inputs[person.id-1].dir === "right"){person.dir = person.dirs.right}
+    if (person.realPos + person.width >= this.width+this.pos){person.realPos = this.width - person.width + this.pos}
     let pPoss = []; //Array of player positions
-    if ((person.realPos >= 450 && person.realPos<=450+this.levelLen)||(this.pos>0 && this.pos<this.levelLen)){
-      this.persons.forEach((object)=>pPoss.push(object.realPos)) //This player in da zone
+    if ((person.realPos >= 450 && person.realPos<=450+this.levelLen)){
+      this.persons.forEach((object)=>pPoss.push(object.realPos)) //in da zone
       if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
       else{this.pos = Math.max(...pPoss) - 450}
-    } else if (this.pos>0 && this.pos<this.levelLen){//Other player in da zone
-      this.persons.forEach((object)=>pPoss.push(object.realPos))
-      if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
-      else{this.pos = Math.max(...pPoss) - 450}
-    } else {//Nobody in da zone
+    } else {//Not in da zone
       if (this.pos >= this.levelLen){this.pos = this.levelLen}
       else if (this.pos <= 0){this.pos = 0}
     }
-    if (this.inputs[person.id-1].dir === "left"){person.dir = person.dirs.left}
-    if (this.inputs[person.id-1].dir === "right"){person.dir = person.dirs.right}
   }
   elfGame(elf){
     if(elf.realPos + elf.width >= this.levelLen+800){elf.dir = elf.dirs.left}
+    elf.detect=elf.detects.top=elf.detects.left=elf.detects.right=elf.detects.bottom=false
+    this.blocks.forEach((block)=>this.elfBlock(elf, block))
   }
   gingerGame(ginger){
     if (ginger.realPos + ginger.width >= this.levelLen+800){ginger.dir = ginger.dirs.left}
+    ginger.detects.top=ginger.detects.left=ginger.detects.right=ginger.detects.bottom=false
+    this.blocks.forEach((block)=>this.gingerBlock(ginger, block))
     if(ginger.jumpCount === 1){
       let pPoss = []; //Array of player positions
       if (this.numPlayers === 1){
@@ -135,111 +201,83 @@ export default class Game {
       ginger.jumpCount=0
     }
   }
+  snowmanGame(snowman){
+    snowman.detects.top=snowman.detects.left=snowman.detects.right=snowman.detects.bottom=false
+    this.blocks.forEach((block)=>this.snowmanBlock(snowman, block))
+    if(snowman.throw){
+      this.snowballs.push(new Snowball(this.info, this.snowballi, {x:snowman.realPos+snowman.width/2, y: snowman.pos.y+snowman.height/2}))
+      this.snowballi++
+    }
+  }
+  snowballGame(snowball){
+    if(snowball.realPos + snowball.width >= this.levelLen+800){snowball.delete=true}
+    snowball.detects.top=snowball.detects.left=snowball.detects.right=snowball.detects.bottom=false
+    this.blocks.forEach((block)=>this.snowballBlock(snowball, block))
+  }
+  icicleGame(icicle){
+    this.persons.forEach((person)=>this.verticalDetector(person, icicle))
+    if(icicle.falling){this.blocks.forEach((block)=>this.icicleBlock(icicle, block))}
+  }
+  deerGame(deer){
+    if(deer.realPos + deer.width >= this.levelLen+800){deer.dir = deer.dirs.left}
+    deer.detect = false
+    this.blocks.forEach((block)=>this.deerBlock(deer, block))
+  }
   doorGame(door){
-    this.hvHandicap = 0
-    this.hitbox = 0
+    if (!this.collect){door.state = 'open'}
     for (let i=0; i<this.numPlayers; i++){
-      if(this.detector(this.persons[i], door)!==false){
-        this.level += 1
+      if(this.detector(this.persons[i], door)!==false&&door.state==='open'){
+        this.level ++
         this.start()
         break;
       }
     }
   }
-  blockGame(block){
-    this.persons.forEach((person)=>this.personBlock(person, block))
-    this.elves.forEach((elf)=>this.elfBlock(elf, block))
-    this.gingers.forEach((ginger)=>this.gingerBlock(ginger, block))
+  angelGame(angel){
+    this.persons.forEach((person)=>this.personAngel(person, angel))
   }
-  detector(sprite, block){
-    if (sprite.pos.y + sprite.height > block.pos.y -this.hitbox && sprite.pos.y < block.pos.y + block.height + this.hitbox && sprite.realPos + sprite.width > block.realPos - this.hitbox && sprite.realPos < block.realPos + block.width + this.hitbox){
-      let dl = sprite.realPos+sprite.width-block.realPos - this.hvHandicap
-      let dr = block.realPos+block.width-sprite.realPos - this.hvHandicap
-      let dt = sprite.pos.y+sprite.height-block.pos.y + this.hvHandicap
-      let db = block.pos.y+block.height-sprite.pos.y + this.hvHandicap
-      if (dl<dt && dl< db){return "left"}
-      else if (dr<dt && dr<db){return "right"}
-      else if (dt<db){return "top"}
-      else{return "bottom"}
-    }
-    return false
-  }
+  caneGame(cane){}
+  blockGame(block){}
   personBlock(person, block){
-    this.hvHandicap = -2
-    this.hitbox = -1
-    let spot = this.detector(person, block)
-    switch (String(spot)) {
-      case "top":
-        person.canJump = true
-        person.pos.y = block.pos.y - person.height
-        person.speed.y = 0;
-        if (!person.moving){person.friction = person.blockFriction}
-        break
-      case "left":
-        person.realPos = block.realPos - person.width
-        person.speed.x = 0
-        person.moving = false
-        break
-      case "right":
-        person.realPos = block.realPos + block.width
-        person.speed.x = 0
-        person.moving = false
-        break
-      case "bottom":
-        person.pos.y = block.pos.y + block.height
-        person.speed.y = 0
-        break
-    }
+    let spot = false
+    if(block.covered){spot = this.detector(person, block, 0, 4)}
+    else{spot = this.detector(person, block, -1, -4)}
+    if(spot){this.spriteBlock(person, block, spot)}
   }
   elfBlock(elf, block){
-    this.hvHandicap = -3
-    this.hitbox = -2
-    let spot = this.detector(elf, block)
-    switch (String(spot)) {
-      case "top":
-        elf.canJump = true
-        elf.pos.y = block.pos.y - elf.height
-        elf.speed.y = 0;
-        break
-      case "left":
-        elf.realPos = block.realPos - elf.width
-        elf.speed.x = 0
-        elf.jump()
-        break
-      case "right":
-        elf.realPos = block.realPos + block.width
-        elf.speed.x = 0
-        elf.jump()
-        break
-      case "bottom":
-        elf.pos.y = block.pos.y + block.height
-        elf.speed.y = 0
-        break
-    }
+    let spot = false
+    if(block.covered){spot = this.detector(elf, block, 2, 0)}
+    else{spot = this.detector(elf, block, -1, 1)}
+    if(spot){this.spriteBlock(elf, block, spot)}
   }
   gingerBlock(ginger, block){
-    this.hvHandicap = 2
-    this.hitbox = 0
-    let spot = this.detector(ginger, block)
-    switch (String(spot)) {
-      case "top":
-        ginger.canJump = true
-        ginger.pos.y = block.pos.y - ginger.height
-        ginger.speed.y = 0;
-        ginger.jump()
-        break
-      case "left":
-        ginger.realPos = block.realPos - ginger.width
-        ginger.speed.x = 0
-        break
-      case "right":
-        ginger.realPos = block.realPos + block.width
-        ginger.speed.x = 0
-        break
-      case "bottom":
-        ginger.pos.y = block.pos.y + block.height
-        ginger.speed.y = 0
-        break
+    let spot = this.detector(ginger, block, 0, 2)
+    if(spot){this.spriteBlock(ginger, block, spot)}
+  }
+  snowmanBlock(snowman, block){
+    let spot = this.detector(snowman, block, -1, 2)
+    if(spot){this.spriteBlock(snowman, block, spot)}
+  }
+  snowballBlock(snowball, block){
+    let spot = this.detector(snowball, block, 0, -3)
+    if(spot){this.spriteBlock(snowball, block, spot)}
+  }
+  icicleBlock(icicle, block){
+    let spot = this.detector(icicle, block, 0, 10)
+    if(spot==="top"){
+      icicle.detect=true
+      icicle.pos.y = block.pos.y - icicle.height
+    }
+  }
+  deerBlock(deer, block){
+    let spot = this.detector(deer, block, 100, -3)
+    if(spot!==false){deer.detect=true}
+  }
+  personAngel(person, angel){
+    let hitbox = 5
+    if (person.pos.y + person.height > angel.pos.y -hitbox && person.pos.y < angel.pos.y + angel.height + hitbox && person.realPos + person.width > angel.realPos - hitbox && person.realPos < angel.realPos + angel.width + hitbox){
+      angel.delete = true
+      this.collect--
     }
   }
   togglePause() {

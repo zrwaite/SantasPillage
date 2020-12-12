@@ -18,21 +18,16 @@ export default class Elf extends Sprite{
     this.height = 60
     this.width = 40
     this.count = 0
+    this.detect = false
+    this.detectNum = 0
     this.legSpeed = 12
     this.canJump = false
     this.speed = {
       x:0,
       y:0,
       maxx:5,
-      maxy:13
+      maxy:14
     }
-    this.reset()
-  }
-  reset(){
-    this.pos.x = this.startPos.x
-    this.pos.y = this.startPos.y
-    this.speed.y = 0
-    this.speed.x = 0
   }
   update(deltaTime) {
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
@@ -44,27 +39,53 @@ export default class Elf extends Sprite{
       else {this.count=0}
     }
     this.image = this.images[this.mstate][this.dir]
+    this.detector()
     this.speedControl()
-    this.xDetect()
     super.update()
   }
   speedControl(){
-    if (this.dir === this.dirs.right){
-      if (this.canJump){this.speed.x = this.speed.maxx}
-      else {this.speed.x = 1}
-    } else {
-      if (this.canJump){this.speed.x = -this.speed.maxx}
-      else {this.speed.x = -1}
+    if(this.detect){
+      this.speed.x = 0
+      this.jump()
+      this.detectNum++
+      if(this.detectNum>50){
+        this.detectNum = 0
+        this.detect=false
+        if(this.dir===0){this.dir=1}
+        else{this.dir=0}
+        if (this.dir === this.dirs.right){this.speed.x = this.speed.maxx}
+        else {this.speed.x = -this.speed.maxx}
+      }
+    }
+    else{
+      if (this.dir === this.dirs.right){this.speed.x = this.speed.maxx}
+      else {this.speed.x = -this.speed.maxx}
+      this.detectNum = 0
     }
   }
-  xDetect(){
+  detector(){
     if (this.realPos <=0){
       this.realPos = 0
       this.dir = this.dirs.right
     }
+    if(this.detects.top){
+      this.canJump = true
+      this.speed.y = 0;
+    }
+    if(this.detects.left){
+      if (this.dir===1){this.detect = true}
+    }
+    if(this.detects.right){
+      if (this.dir===0){this.detect = true}
+    }
+    if(this.detects.bottom){
+      this.speed.x = 0
+    }
+
   }
   jump() {
     if (this.canJump) {
+      console.log(this.canJump)
       this.speed.y = -this.speed.maxy
       this.canJump = false
     }

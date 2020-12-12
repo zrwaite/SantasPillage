@@ -29,6 +29,7 @@ export default class Display{
     this.cropWidth = 2500
     this.cropHeight = 2178
     this.image = document.getElementById("img-wideBackground")
+    this.hat = document.getElementById("img-hat")
   }
   update(deltaTime){
     if (this.game.state === this.game.states.start) {
@@ -76,7 +77,6 @@ export default class Display{
       }
     }
   }
-
   draw(ctx){
     //Menu Screen
     if (this.game.state === this.game.states.start) {
@@ -88,7 +88,14 @@ export default class Display{
       ctx.font = "80px Copperplate"
       ctx.fillStyle = "black"
       ctx.textAlign = "center"
+      ctx.globalAlpha = 0.2
+      ctx.fillText("SANTA'S VILLAGE", 400, 75)
+      ctx.globalAlpha = 1
       ctx.fillText("SANTA'S PILLAGE", 400, 75)
+      ctx.setTransform(1, 0, 0, 1, 0, 0) // sets scale and origin
+      ctx.rotate(-0.5)
+      ctx.drawImage(this.hat, 18, 45, 40, 20)
+      ctx.rotate(0.5)
       ctx.font = "30px Copperplate"
       ctx.fillStyle = "black"
       ctx.textAlign = "center"
