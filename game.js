@@ -19,6 +19,7 @@ export default class Game {
     this.deletes=0
     this.numPlayers = 0
     this.collect = 0
+    this.lives = [5, 5]
     this.players = []
     this.objects = [] //Used to store all game objects from level generator
     this.delObjects = []
@@ -55,6 +56,7 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
+    console.log("star")
     this.deletes=0
     this.players = this.display.players
     this.numPlayers = 0
@@ -85,7 +87,12 @@ export default class Game {
     this.objects = [...this.blocks, ...this.doors, ...this.persons, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles]
     this.delObjects = [...this.snowballs, ...this.cookies] //Objects that can be deleted
     this.inputs = [new Controller(this, this.persons[0])]
-    if (this.numPlayers > 1){this.inputs.push(new Controller(this, this.persons[1]))}//Multiplayer:
+    this.persons[0].lives=this.lives[0]
+    if (this.numPlayers > 1){//Multiplayer:
+      this.inputs.push(new Controller(this, this.persons[1]))
+      this.persons[1].lives=this.lives[1]
+    }
+    else {this.lives[1]=0}
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
@@ -96,6 +103,7 @@ export default class Game {
     this.delObjects=this.delObjects.filter(this.deleter)
     this.cookies=this.cookies.filter(this.deleter)
     this.snowballs=this.snowballs.filter(this.deleter)
+    if(this.lives[0]+this.lives[1]<=0){this.state=this.states.gameover}
     this.persons.forEach((person)=>this.personGame(person))
     this.elves.forEach((elf)=>this.elfGame(elf))
     this.gingers.forEach((ginger)=>this.gingerGame(ginger))
@@ -113,10 +121,8 @@ export default class Game {
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
   deleter(sprite){
-    if(sprite.delete){
-      return false
-    }
-    else {return true}
+    if(sprite.delete){return false}
+    return true
   }
   detector(sprite, block, hitbox=0, hvhandicap=0){
     //Bigger HVHandicap means more likely to be horizontal detection
@@ -159,8 +165,12 @@ export default class Game {
     }
   }
   personGame(person){
+    if(person.lives===0){console.log(person.speed.x)}
     person.detects.top=person.detects.left=person.detects.right=person.detects.bottom=false
-    this.blocks.forEach((block)=>this.personBlock(person, block))
+    this.blocks.forEach((block)=>this.personBlock(person, block));
+    [...this.elves, ...this.gingers, ...this.snowballs, ...this.deers, ...this.canes].forEach((enemy)=>this.personEnemy(person, enemy))
+    this.icicles.forEach((icicle)=>this.personIcicle(person, icicle))
+    person.lives=this.lives[person.id-1]
     if(this.inputs[person.id-1].uPressed){person.jump()}
     if(this.inputs[person.id-1].lPressed){person.left()}
     if(this.inputs[person.id-1].rPressed){person.right()}
@@ -169,13 +179,14 @@ export default class Game {
     if (this.inputs[person.id-1].dir === "right"){person.dir = person.dirs.right}
     if (person.realPos + person.width >= this.width+this.pos){person.realPos = this.width - person.width + this.pos}
     let pPoss = []; //Array of player positions
-    if ((person.realPos >= 450 && person.realPos<=450+this.levelLen)){
-      this.persons.forEach((object)=>pPoss.push(object.realPos)) //in da zone
+    if (person.realPos >= 450 && person.realPos<=450+this.levelLen && person.lives>0){
+      this.persons.forEach((object)=>pPoss.push(object.lives>0? object.realPos:0))
       if (Math.max(...pPoss) > this.levelLen + 450){this.pos = this.levelLen}
       else{this.pos = Math.max(...pPoss) - 450}
     } else {//Not in da zone
       if (this.pos >= this.levelLen){this.pos = this.levelLen}
       else if (this.pos <= 0){this.pos = 0}
+      else if (this.lives[0]+this.lives[1]-person.lives<=0&&person.lives>0){this.pos = 0}
     }
   }
   elfGame(elf){
@@ -193,7 +204,7 @@ export default class Game {
         if(ginger.realPos < this.persons[0].realPos){ginger.dir = ginger.dirs.right}
         else {ginger.dir = ginger.dirs.left}
       } else if (this.numPlayers === 2){
-        this.persons.forEach((object)=>pPoss.push(object.realPos))
+        this.persons.forEach((object)=>pPoss.push(object.lives>0? object.realPos:-10000))
         if (Math.abs(ginger.realPos-pPoss[0])>Math.abs(ginger.realPos-pPoss[1])){pPoss = pPoss[1]}
         else{pPoss = pPoss[0]}
         if(ginger.realPos < pPoss){ginger.dir = ginger.dirs.right}
@@ -245,6 +256,24 @@ export default class Game {
     else{spot = this.detector(person, block, -1, -4)}
     if(spot){this.spriteBlock(person, block, spot)}
   }
+  personEnemy(person, enemy){
+    if(!person.hit){
+      let hitbox = -5
+      if (person.pos.y + person.height > enemy.pos.y -hitbox && person.pos.y < enemy.pos.y + enemy.height + hitbox && person.realPos + person.width > enemy.realPos - hitbox && person.realPos < enemy.realPos + enemy.width + hitbox){
+        this.lives[person.id-1]--
+        person.hit = true
+      }
+    }
+  }
+  personIcicle(person, icicle){
+    if (icicle.mstate!=="i3" && !person.hit){
+      let hitbox = -5
+      if (person.pos.y + person.height > icicle.pos.y -hitbox && person.pos.y < icicle.pos.y + icicle.height + hitbox && person.realPos + person.width > icicle.realPos - hitbox && person.realPos < icicle.realPos + icicle.width + hitbox){
+        this.lives[person.id-1]--
+        person.hit = true
+      }
+    }
+  }
   elfBlock(elf, block){
     let spot = false
     if(block.covered){spot = this.detector(elf, block, 2, 0)}
@@ -275,7 +304,6 @@ export default class Game {
     if(spot!==false){deer.detect=true}
   }
   personCookie(person, cookie){
-    console.log(this.collect)
     let hitbox = 5
     if (person.pos.y + person.height > cookie.pos.y -hitbox && person.pos.y < cookie.pos.y + cookie.height + hitbox && person.realPos + person.width > cookie.realPos - hitbox && person.realPos < cookie.realPos + cookie.width + hitbox){
       cookie.delete = true

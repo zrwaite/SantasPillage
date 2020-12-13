@@ -6,7 +6,11 @@ export default class Input{
           game.togglePause()
           break
         case 32: //Start, Space
-          game.start()
+          if(game.state===game.states.start){game.start()}
+          else if(game.state===game.states.gameover){
+            game.state=game.states.start
+            game.lives = [5, 5]
+          }
           break
       }
     })

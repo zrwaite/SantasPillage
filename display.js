@@ -115,6 +115,17 @@ export default class Display{
         ctx.drawImage(players[i][0], players[i][1], players[i][2], players[i][3], players[i][4])
       }
     }
+    if (this.game.state === this.game.states.running) {
+      ctx.font = "30px Copperplate"
+      ctx.fillStyle = "black"
+      ctx.textAlign = "center"
+      if(this.game.numPlayers===1){
+        ctx.fillText("Lives: " + this.game.lives[0], 70, 30)
+      } else{
+        ctx.fillText("P1 Lives: " + this.game.lives[0], 90, 30)
+        ctx.fillText("P2 Lives: " + this.game.lives[1], 90, 60)
+      }
+    }
     //Paused Screen
     else if (this.game.state === this.game.states.paused) {
       ctx.rect(0, 0, this.width, this.height)

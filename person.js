@@ -43,13 +43,16 @@ export default class Person extends Sprite{
     this.characters = [this.zac, this.matt, this.kell, this.grey, this.bella, this.weiqi]
     this.person = this.characters[this.player]
     this.image = this.person[this.mstate][this.dir]
+    this.death = document.getElementById("img-ghostR")
     this.height = 100
     this.width = 50
     this.count = 0
+    this.wait = 0
     this.legSpeed = 10 //time between the walking animation frames
     this.lives = 3
     this.canJump = false //Is true when there is ground under you
     this.moving = false //If you are moving left or right with the controls
+    this.hit = false
     this.speed = {
       x:0,
       y:0,
@@ -64,6 +67,17 @@ export default class Person extends Sprite{
     this.speed.x = 0
   }
   update(deltaTime) {
+    if(this.lives<=0){
+      this.image=(this.death)
+      return
+    }
+    if(this.hit){
+      this.wait++
+      if(this.wait>60){
+        this.hit = false
+        this.wait = 0
+      }
+    }
     if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     if (!this.canJump){this.mstate="j"}
     else if (this.moving){
@@ -79,6 +93,11 @@ export default class Person extends Sprite{
     this.speedControl()
     this.detector()
     super.update()
+  }
+  draw(ctx) {
+    if(this.hit){ctx.globalAlpha = 0.5}
+    ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)
+    ctx.globalAlpha = 1
   }
   speedControl(){
     if (this.speed.x>this.speed.maxx){this.speed.x = this.speed.maxx}
@@ -139,10 +158,5 @@ export default class Person extends Sprite{
       this.speed.y = -this.speed.maxy
       this.canJump = false
     }
-  }
-  draw(ctx) {
-    if(this.lstate===1){ctx.globalAlpha = 0.5}
-    ctx.drawImage(this.image, this.pos.x, this.pos.y, this.width, this.height)
-    ctx.globalAlpha = 1
   }
 }

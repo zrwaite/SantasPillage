@@ -18,7 +18,6 @@ export default class Cookie {
     this.delete = false
   }
   update() {
-    console.log(this.delete)
     this.count+=0.1
     if(this.count===360){this.count=0}
     this.pos.y=this.startPos + Math.sin(this.count)*7

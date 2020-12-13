@@ -85,7 +85,6 @@ export default class Elf extends Sprite{
   }
   jump() {
     if (this.canJump) {
-      console.log(this.canJump)
       this.speed.y = -this.speed.maxy
       this.canJump = false
     }
