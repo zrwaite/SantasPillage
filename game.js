@@ -69,8 +69,8 @@ export default class Game {
     this.state = this.states.running //Starts the game
     // Pulls objects from level creator
     this.objects = build(this, this.levels[this.numPlayers-1][this.level])
-    this.persons = this.objects[0]
-    this.blocks = this.objects[1]
+    this.persons = this.objects[1]
+    this.blocks = this.objects[0]
     this.doors = this.objects[2]
     this.elves = this.objects[3]
     this.gingers = this.objects[4]
