@@ -56,7 +56,6 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
-    console.log("star")
     this.deletes=0
     this.players = this.display.players
     this.numPlayers = 0
@@ -96,6 +95,7 @@ export default class Game {
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
+    console.log(this.pos)
     if (this.state===this.states.start){this.display.update(deltaTime)}
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
@@ -165,7 +165,6 @@ export default class Game {
     }
   }
   personGame(person){
-    if(person.lives===0){console.log(person.speed.x)}
     person.detects.top=person.detects.left=person.detects.right=person.detects.bottom=false
     this.blocks.forEach((block)=>this.personBlock(person, block));
     [...this.elves, ...this.gingers, ...this.snowballs, ...this.deers, ...this.canes].forEach((enemy)=>this.personEnemy(person, enemy))
@@ -177,7 +176,7 @@ export default class Game {
     if(!this.inputs[person.id-1].rPressed&&!this.inputs[person.id-1].lPressed){person.moving = false} //If left and right aren't pressed then they aren't moving
     if (this.inputs[person.id-1].dir === "left"){person.dir = person.dirs.left}
     if (this.inputs[person.id-1].dir === "right"){person.dir = person.dirs.right}
-    if (person.realPos + person.width >= this.width+this.pos){person.realPos = this.width - person.width + this.pos}
+    if (person.realPos + person.width >= this.width+this.pos&&person.lives>0){person.realPos = this.width - person.width + this.pos}
     let pPoss = []; //Array of player positions
     if (person.realPos >= 450 && person.realPos<=450+this.levelLen && person.lives>0){
       this.persons.forEach((object)=>pPoss.push(object.lives>0? object.realPos:0))
@@ -186,7 +185,7 @@ export default class Game {
     } else {//Not in da zone
       if (this.pos >= this.levelLen){this.pos = this.levelLen}
       else if (this.pos <= 0){this.pos = 0}
-      else if (this.lives[0]+this.lives[1]-person.lives<=0&&person.lives>0){this.pos = 0}
+      else if (this.lives[0]+this.lives[1]-person.lives<=0&&person.lives>0&&this.numPlayers>1){this.pos = 0}
     }
   }
   elfGame(elf){

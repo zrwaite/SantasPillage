@@ -11,9 +11,12 @@ export default class Elf extends Sprite{
       right: 1
     }
     this.mstate = "w1";
+    /*
     let num = Math.floor(Math.random() * 2)
     if (num === 0){this.dir = this.dirs.right}
     else {this.dir = this.dirs.left}
+    */
+    this.dir=this.dirs.left
     this.image = this.images[this.mstate][this.dir]
     this.height = 60
     this.width = 40
