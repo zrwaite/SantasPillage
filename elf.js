@@ -33,7 +33,6 @@ export default class Elf extends Sprite{
     }
   }
   update(deltaTime) {
-    if (this.pos.y + this.height >= this.info.height) {this.canJump = true}
     if (!this.canJump){this.mstate="j"}
     else{
       this.count++
@@ -48,10 +47,10 @@ export default class Elf extends Sprite{
   }
   speedControl(){
     if(this.detect){
-      this.speed.x = 0
+      this.speed.x = (this.dir-0.5)*4
       this.jump()
       this.detectNum++
-      if(this.detectNum>50){
+      if(this.detectNum>35){
         this.detectNum = 0
         this.detect=false
         if(this.dir===0){this.dir=1}
@@ -71,18 +70,18 @@ export default class Elf extends Sprite{
       this.realPos = 0
       this.dir = this.dirs.right
     }
-    if(this.detects.top){
+    if(this.detects.top || this.pos.y+this.height>=this.info.height){
       this.canJump = true
       this.speed.y = 0;
-    }
+    } else {this.canJump = false}
     if(this.detects.left){
       if (this.dir===1){this.detect = true}
     }
-    if(this.detects.right){
+    else if(this.detects.right){
       if (this.dir===0){this.detect = true}
     }
-    if(this.detects.bottom){
-      this.speed.x = 0
+    else if(this.detects.bottom){
+      this.speed.y=0
     }
 
   }

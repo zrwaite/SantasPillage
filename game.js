@@ -15,7 +15,7 @@ export default class Game {
     this.levels = levels
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
-    this.level = 0//starting level is 0
+    this.level = 6//starting level is 0
     this.deletes=0
     this.numPlayers = 0
     this.collect = 0
@@ -83,7 +83,7 @@ export default class Game {
     this.cookies=this.objects[9]
     this.collect=this.cookies.length
     this.levelLen = this.objects[10] - 800
-    this.objects = [...this.blocks, ...this.doors, ...this.persons, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles]
+    this.objects = [...this.blocks, ...this.doors, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles, ...this.persons,]
     this.delObjects = [...this.snowballs, ...this.cookies] //Objects that can be deleted
     this.inputs = [new Controller(this, this.persons[0])]
     this.persons[0].lives=this.lives[0]
@@ -95,7 +95,6 @@ export default class Game {
     this.pos = 0 //Resets map position
   }
   update(deltaTime) {
-    console.log(this.pos)
     if (this.state===this.states.start){this.display.update(deltaTime)}
     if (this.state!==this.states.running)return //If the game isn't running, dont run the game
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
@@ -126,7 +125,7 @@ export default class Game {
   }
   detector(sprite, block, hitbox=0, hvhandicap=0){
     //Bigger HVHandicap means more likely to be horizontal detection
-    if (sprite.pos.y + sprite.height > block.pos.y -hitbox && sprite.pos.y < block.pos.y + block.height + hitbox && sprite.realPos + sprite.width > block.realPos - hitbox && sprite.realPos < block.realPos + block.width + hitbox){
+    if (sprite.pos.y + sprite.height >= block.pos.y -hitbox && sprite.pos.y <= block.pos.y + block.height + hitbox && sprite.realPos + sprite.width >= block.realPos - hitbox && sprite.realPos <= block.realPos + block.width + hitbox){
       let dl = sprite.realPos+sprite.width-block.realPos - hvhandicap + hitbox
       let dr = block.realPos+block.width-sprite.realPos - hvhandicap - hitbox
       let dt = sprite.pos.y+sprite.height-block.pos.y + hvhandicap + hitbox
@@ -215,8 +214,11 @@ export default class Game {
   snowmanGame(snowman){
     snowman.detects.top=snowman.detects.left=snowman.detects.right=snowman.detects.bottom=false
     this.blocks.forEach((block)=>this.snowmanBlock(snowman, block))
+    if(!snowman.dead){this.persons.forEach((person)=>this.personSnowman(person, snowman))}
     if(snowman.throw){
-      this.snowballs.push(new Snowball(this.info, this.snowballi, {x:snowman.realPos+snowman.width/2, y: snowman.pos.y+snowman.height/2}))
+      let dir = Math.floor(this.snowballi/this.snowmen.length)%2===0? -1:1
+      this.snowballs.push(new Snowball(dir, this.info, this.snowballi, {x:snowman.realPos+snowman.width/2, y: snowman.pos.y+snowman.height/2}))
+      this.delObjects.push(this.snowballs[this.snowballs.length-1])
       this.snowballi++
     }
   }
@@ -273,14 +275,20 @@ export default class Game {
       }
     }
   }
+  personSnowman(person, snowman){
+    let hitbox = -5
+    if (person.pos.y + person.height > snowman.pos.y -hitbox && person.pos.y < snowman.pos.y + snowman.height + hitbox && person.realPos + person.width > snowman.realPos - hitbox && person.realPos < snowman.realPos + snowman.width + hitbox){
+      snowman.death()
+    }
+  }
   elfBlock(elf, block){
     let spot = false
-    if(block.covered){spot = this.detector(elf, block, 2, 0)}
-    else{spot = this.detector(elf, block, -1, -1)}
+    if(block.covered){spot = this.detector(elf, block, 0, 1000)}
+    else{spot = this.detector(elf, block, -1, -4)}
     if(spot){this.spriteBlock(elf, block, spot)}
   }
   gingerBlock(ginger, block){
-    let spot = this.detector(ginger, block, 0, 2)
+    let spot = this.detector(ginger, block, -1, 2)
     if(spot){this.spriteBlock(ginger, block, spot)}
   }
   snowmanBlock(snowman, block){
@@ -299,7 +307,7 @@ export default class Game {
     }
   }
   deerBlock(deer, block){
-    let spot = this.detector(deer, block, 100, -3)
+    let spot = this.detector(deer, block, 95, -3)
     if(spot!==false){deer.detect=true}
   }
   personCookie(person, cookie){

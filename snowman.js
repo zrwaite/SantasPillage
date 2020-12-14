@@ -11,7 +11,7 @@ export default class Snowman extends Sprite {
     this.gravity = 0.1
     this.count = 0
     this.throw = false
-    this.wait = Math.floor(Math.random() * 100)+100
+    this.wait = Math.floor(Math.random() * 50)+50
   }
   update() {
     if (!this.dead) {
@@ -29,6 +29,8 @@ export default class Snowman extends Sprite {
           this.count = 0
           break
       }
+    } else if (this.dead){
+      this.height = 53
     }
     this.image = this.images[this.state]
     this.detector()
@@ -40,10 +42,15 @@ export default class Snowman extends Sprite {
       this.gravity = 0;
     }
     if(this.detects.left||this.detects.right){
-
     }
     if(this.detects.bottom){
 
     }
+  }
+  death(){
+    this.dead = true
+    this.state = 2
+    this.speed.y = 0;
+    this.gravity = 0.4;
   }
 }

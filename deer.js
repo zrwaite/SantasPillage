@@ -9,9 +9,11 @@ export default class Deer extends Sprite{
       right: 1
     }
     this.state = 0;
-    let num = Math.floor(Math.random() * 2)
-    if (num === 0){this.dir = this.dirs.right}
-    else {this.dir = this.dirs.left}
+    //let num = Math.floor(Math.random() * 2)
+    //if (num === 0){this.dir = this.dirs.right}
+    //else {
+      this.dir = this.dirs.left
+    //}
     this.image = this.images[this.dir][this.state]
     this.height = 70
     this.width = 100

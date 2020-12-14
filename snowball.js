@@ -1,20 +1,14 @@
 import Sprite from "./sprite.js"
 export default class Snowball extends Sprite{
-  constructor(...args){
+  constructor(dir, ...args){
     super(...args)
     this.images = [
       document.getElementById('img-snowball1'),
       document.getElementById('img-snowball2'),
       document.getElementById('img-snowball3'),
       document.getElementById('img-snowball4'), ]
-    this.dirs = {
-      left: -1,
-      right: 1
-    }
     this.state = 0;
-    let num = Math.floor(Math.random() * 2)
-    if (num === 0){this.dir = this.dirs.right}
-    else {this.dir = this.dirs.left}
+    this.dir = dir
     this.image = this.images[this.state]
     this.height = 30
     this.width = 30
@@ -33,7 +27,7 @@ export default class Snowball extends Sprite{
     this.count+=this.dir
     this.count = this.count%this.spinSpeed
     if(this.count%this.spinSpeed===0){
-      if(this.dir===this.dirs.left){this.state++}
+      if(this.dir===-1){this.state++}
       else{this.state--}
       this.state = (this.state+4)%4
       this.loop++
@@ -45,7 +39,7 @@ export default class Snowball extends Sprite{
     super.update()
   }
   speedControl(){
-    if (this.dir === this.dirs.right){this.speed.x = this.speed.maxx}
+    if (this.dir === 1){this.speed.x = this.speed.maxx}
     else {this.speed.x = -this.speed.maxx}
   }
   detector(){
