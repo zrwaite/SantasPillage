@@ -108,6 +108,7 @@ export default class Display{
       ctx.fillText("Select Characters →", 200, 480)
       ctx.fillText("& Number of Players", 200, 510)
       ctx.fillText("Space to Start", 200, 560)
+      ctx.fillText("Pick 1 for single player", 600, 120)
       ctx.fillText("Player 1      Player 2", 600, 160)
       for(let i=0; i<players.length; i++){
         ctx.fillStyle=bgs[i]
