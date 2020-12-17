@@ -56,7 +56,7 @@ export default class Game {
     this.input = new Input(this) //Standard inputs, like pause and play
   }
   start() {
-    if(this.level>6){this.state=this.states.win;return}
+    if(this.level>7){this.state=this.states.win;return}
     this.deletes=0
     this.players = this.display.players
     this.numPlayers = 0
