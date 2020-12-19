@@ -15,7 +15,7 @@ export default class Game {
     this.levels = levels
     this.levelLen = 0 //Length of level in pixels - used for moving map
     this.pos = 0 //Position of moving map
-    this.startLevel=7
+    this.startLevel=0
     this.level = this.startLevel//starting level is 0
     this.deletes=0
     this.numPlayers = 0
@@ -45,10 +45,11 @@ export default class Game {
     }
     this.states = {
       start: 0,
-      running: 1,
-      paused: 2,
-      gameover: 3,
-      win: 4
+      cutscene: 1,
+      running: 2,
+      paused: 3,
+      gameover: 4,
+      win: 5
     } //All of the game states
     this.state = this.states.start //Default is the start screen
     this.block = new Block(this.info, 0, null) //Declare with null position to pull information from without drawing on screen
@@ -70,23 +71,27 @@ export default class Game {
     if(!this.numPlayers){return}
     this.objects.forEach((object) => object = null)
     this.delObjects.forEach((object) => object = null)
-    this.state = this.states.running //Starts the game
     // Pulls objects from level creator
     this.objects = build(this, this.levels[this.numPlayers-1][this.level])
-    this.persons = this.objects[1]
     this.blocks = this.objects[0]
     this.doors = this.objects[2]
-    this.elves = this.objects[3]
-    this.gingers = this.objects[4]
     this.canes = this.objects[5]
     this.icicles=this.objects[6]
+    this.cookies=this.objects[9]
+    this.levelLen = this.objects[10] - 800
+    this.collect=this.cookies.length
+    if(this.level===0){
+      this.state=this.states.cutscene
+      this.objects = [...this.blocks, ...this.doors, ...this.canes, ...this.icicles, ...this.cookies]
+      return;}
+    this.state = this.states.running //Starts the game
+    this.persons = this.objects[1]
+    this.elves = this.objects[3]
+    this.gingers = this.objects[4]
     this.snowmen=this.objects[7]
     this.snowballi=0
     this.snowballs=[]
     this.deers=this.objects[8]
-    this.cookies=this.objects[9]
-    this.collect=this.cookies.length
-    this.levelLen = this.objects[10] - 800
     this.objects = [...this.blocks, ...this.doors, ...this.elves, ...this.gingers, ...this.snowmen, ...this.deers, ...this.canes, ...this.icicles, ...this.persons,]
     this.delObjects = [...this.snowballs, ...this.cookies] //Objects that can be deleted
     this.inputs = [new Controller(this, this.persons[0])]
@@ -100,7 +105,10 @@ export default class Game {
   }
   update(deltaTime) {
     if (this.state===this.states.start){this.display.update(deltaTime)}
-    if (this.state!==this.states.running)return //If the game isn't running, dont run the game
+    else if (this.state===this.states.cutscene){
+      [this.bg, ...this.objects, this.display].forEach((object) =>object.update(deltaTime));
+    }
+    if (this.state!==this.states.running){return} //If the game isn't running, dont run the game
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) =>object.update(deltaTime));//Updates all objects
     [...this.objects, ...this.delObjects].forEach((object)=>(object.pos.x=object.realPos-this.pos));
     this.delObjects=this.delObjects.filter(this.deleter)
@@ -121,6 +129,10 @@ export default class Game {
   }
   draw(ctx) {
     if (this.state===this.states.start){this.display.draw(ctx);return}
+    if (this.state===this.states.cutscene){
+      [this.bg, ...this.objects, this.display].forEach((object) => object.draw(ctx))
+      return
+    }
     [this.bg, ...this.objects, ...this.delObjects, this.display].forEach((object) => object.draw(ctx))//Draws all objects
   }
   deleter(sprite){

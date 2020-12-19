@@ -1,6 +1,7 @@
 var xpos = 0
 var ypos = 0
 var num = 0
+var totalLives = 0
 var pos = [430, 195]
 var zac1 = [document.getElementById("img-zacSR"), pos[0], pos[1], 50, 100]
 var matt1 = [document.getElementById("img-mattSR"), pos[0]+90, pos[1], 50, 100]
@@ -116,7 +117,7 @@ export default class Display{
         ctx.drawImage(players[i][0], players[i][1], players[i][2], players[i][3], players[i][4])
       }
     }
-    if (this.game.state === this.game.states.running) {
+    else if (this.game.state === this.game.states.running) {
       ctx.font = "30px Copperplate"
       ctx.fillStyle = "black"
       ctx.textAlign = "center"
@@ -126,6 +127,12 @@ export default class Display{
         ctx.fillText("P1 Lives: " + this.game.lives[0], 90, 30)
         ctx.fillText("P2 Lives: " + this.game.lives[1], 90, 60)
       }
+      if(this.game.lives[0]+this.game.lives[1]<totalLives){
+        ctx.rect(0, 0, this.width, this.height)
+        ctx.fillStyle = "rgba(255, 0, 0, 0.8)"
+        ctx.fill()
+      }
+      totalLives=this.game.lives[0]+this.game.lives[1]
     }
     //Paused Screen
     else if (this.game.state === this.game.states.paused) {

@@ -11,6 +11,10 @@ export default class Input{
             game.state=game.states.start
             game.lives = [5, 5]
           }
+          else if(game.state===game.states.cutscene){
+            game.level++
+            game.start()
+          }
           break
       }
     })

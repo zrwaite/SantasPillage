@@ -1,10 +1,11 @@
 export default class Sprite{
-  constructor(info, id, pos){
+  constructor(info, id, pos, cutscene=false){
     this.info = info
     this.gravity = this.info.gravity
     this.fric = this.info.fric
     this.id = id
     this.pos = pos
+    this.cutscene = cutscene
     if (this.pos !== null){
       this.startPos = {
         x: Math.abs(this.pos.x),
