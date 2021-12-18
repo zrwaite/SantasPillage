@@ -1,4 +1,4 @@
-# 🎅🏻 SantasPillage ☠️: My first big video game! 
+# 🎅🏻 Santa's Pillage ☠️: My first big video game! 
 ## Play the game 🕹[here](https://insomnizac.itch.io/santas-pillage)🎮
 
 This game was created in vanilla javascript, no libraries, just canvas. I designed this game based off of another game I made during a game jam. 
@@ -10,5 +10,32 @@ I spent a few weeks coding the first 10% of the game, then on December 23rd real
 All of the pixel art 👾, music 🎼, design 🎨, and code 👨🏻‍💻 was written by me, with a small amount of code help from a padawan [Weiqi Xu](https://github.com/weiqixu05).
 
 The music is definitely better than the code, but hopefully you still enjoy the game. 
+
+<table>
+	<tr>
+		<td>
+			<img src="./preview/preview1.png">
+		</td>
+		<td>
+			<img src="./preview/preview2.png">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="./preview/preview3.png">
+		</td>
+		<td>
+			<img src="./preview/preview4.png">
+		</td>
+	</tr>
+	<tr>
+		<td>
+			<img src="./preview/preview5.png">
+		</td>
+		<td>
+			<img src="./preview/preview6.png">
+		</td>
+	</tr>
+</table>
 
 $5 if you beat it. 💸
