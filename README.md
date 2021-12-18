@@ -11,28 +11,39 @@ All of the pixel art 👾, music 🎼, design 🎨, and code 👨🏻‍💻 was
 
 The music is definitely better than the code, but hopefully you still enjoy the game. 
 
-<img src="./preview/previewhome.png">
 <table>
-		<td>
+	<tr>
+		<td></td>
+		<td></td>
+		<td></td>
+		<td></td>
+	</tr>
+	<tr><td></td>
+		<td colspan="2">
+			<img src="./preview/previewhome.png">
+		</td>
+	<td></td></tr>
+	<tr>
+		<td colspan="2">
 			<img src="./preview/preview1.png">
 		</td>
-		<td>
+		<td colspan="2">
 			<img src="./preview/preview1.png">
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<img src="./preview/preview3.png">
 		</td>
-		<td>
+		<td colspan="2">
 			<img src="./preview/preview4.png">
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<img src="./preview/preview5.png">
 		</td>
-		<td>
+		<td colspan="2">
 			<img src="./preview/preview6.png">
 		</td>
 	</tr>
