@@ -11,13 +11,8 @@ All of the pixel art 👾, music 🎼, design 🎨, and code 👨🏻‍💻 was
 
 The music is definitely better than the code, but hopefully you still enjoy the game. 
 
+<img src="./preview/previewhome.png">
 <table>
-	<tr>
-		<td colspan="2">
-			<img src="./preview/previewhome.png">
-		</td>
-	</tr>
-	<tr>
 		<td>
 			<img src="./preview/preview1.png">
 		</td>
