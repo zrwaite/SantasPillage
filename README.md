@@ -28,7 +28,7 @@ The music is definitely better than the code, but hopefully you still enjoy the 
 			<img src="./preview/preview1.png">
 		</td>
 		<td colspan="2">
-			<img src="./preview/preview1.png">
+			<img src="./preview/preview2.png">
 		</td>
 	</tr>
 	<tr>
