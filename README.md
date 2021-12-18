@@ -13,11 +13,16 @@ The music is definitely better than the code, but hopefully you still enjoy the 
 
 <table>
 	<tr>
+		<td colspan="2">
+			<img src="./preview/previewhome.png">
+		</td>
+	</tr>
+	<tr>
 		<td>
 			<img src="./preview/preview1.png">
 		</td>
 		<td>
-			<img src="./preview/preview2.png">
+			<img src="./preview/preview1.png">
 		</td>
 	</tr>
 	<tr>
